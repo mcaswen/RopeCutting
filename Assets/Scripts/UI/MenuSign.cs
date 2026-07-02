@@ -18,7 +18,7 @@ namespace UI
     public class MenuSign : MonoBehaviour
     {
         [SerializeField] private MenuAction _action;
-        [SerializeField] private string _gameSceneName = "Scene_wanyun";
+        [SerializeField] private string _gameSceneName = "Scene_Level1_sdw";
         [SerializeField] private string _groundTag = "Finish";
 
         private void Awake()

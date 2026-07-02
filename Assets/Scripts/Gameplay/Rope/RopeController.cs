@@ -29,6 +29,7 @@ namespace Gameplay.Rope
 
         [FormerlySerializedAs("_candy")]
         [SerializeField] private RopeConnectable _connectable;
+        [SerializeField] private Transform _connectableAttachPoint;
         [FormerlySerializedAs("_connectedEnd")]
         [SerializeField, HideInInspector] private Rigidbody2D _legacyConnectedEndRigidbody;
 
@@ -94,11 +95,15 @@ namespace Gameplay.Rope
             if (_startAnchorPoint == null || _connectable == null) return;
 
             _connectable.ReleaseInitialConnection();
+            Vector2 localAttachPoint = _connectableAttachPoint != null
+                ? _connectable.transform.InverseTransformPoint(_connectableAttachPoint.position)
+                : _connectable.GetLocalAttachPoint(_startAnchorPoint.position);
+
             RopeChain chain = new RopeChain
             {
                 StartAnchorPoint = _startAnchorPoint,
                 ConnectsToConnectable = true,
-                ConnectableLocalAttachPoint = _connectable.GetLocalAttachPoint(_startAnchorPoint.position),
+                ConnectableLocalAttachPoint = localAttachPoint,
                 LineRenderer = CreateLineRenderer(0)
             };
 

@@ -9,6 +9,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Scene_wanyun_Start.unity
     guid: ba6334787ac879243a95073c4c389902
   - enabled: 1
-    path: Assets/Scenes/Scene_wanyun.unity
-    guid: a5e6c2513f2c6a24ea80c019ff81ea04
+    path: Assets/Scenes/Scene_Level1_sdw.unity
+    guid: 4ffa3eb8a5bc9584caa5505a9d4218d9
   m_configObjects: {}

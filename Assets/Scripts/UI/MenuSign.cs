@@ -1,4 +1,5 @@
 using UnityEngine;
+using Systems;
 
 namespace UI
 {
@@ -34,6 +35,8 @@ namespace UI
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (!other.CompareTag(_groundTag)) return;
+
+            SfxPlayer.Play(SfxId.Drop);
 
             switch (_action)
             {

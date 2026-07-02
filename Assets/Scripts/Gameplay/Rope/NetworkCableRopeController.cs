@@ -27,6 +27,7 @@ namespace Gameplay.Rope
             if (effect != null)
                 effect.Play(_glitchDuration, _glitchStrength);
 
+            SfxPlayer.Play(SfxId.ShortCircuit);
             _onGlitchStarted?.Invoke();
         }
 

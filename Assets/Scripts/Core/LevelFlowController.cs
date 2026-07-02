@@ -1,6 +1,7 @@
 using System.Collections;
 using Gameplay.Character;
 using Gameplay.Collectible;
+using Systems;
 using UI;
 using UnityEngine;
 using UnityEngine.Events;
@@ -110,6 +111,8 @@ namespace Core
 
         private void ShowVictoryResult()
         {
+            SfxPlayer.Play(SfxId.Win);
+
             if (_resultPanel != null)
                 _resultPanel.ShowVictory();
 
@@ -120,6 +123,7 @@ namespace Core
         protected virtual void OnFailure()
         {
             CancelVictoryResultRoutine();
+            SfxPlayer.Play(SfxId.Lose);
 
             if (_resultPanel != null)
                 _resultPanel.ShowFailure();

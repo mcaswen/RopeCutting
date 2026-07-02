@@ -1,4 +1,5 @@
 using Gameplay.Rope;
+using Systems;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -55,6 +56,7 @@ namespace Gameplay.Collectible
             _velocity = _flyVelocity;
 
             PlayFlyAnimation();
+            SfxPlayer.Play(SfxId.WingFlap);
             _onFlyStarted?.Invoke();
 
             if (_destroyAfterSeconds > 0f)

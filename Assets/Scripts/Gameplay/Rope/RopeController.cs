@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Gameplay.Collectible;
+using Systems;
 using UnityEngine.Serialization;
 
 namespace Gameplay.Rope
@@ -455,6 +456,10 @@ namespace Gameplay.Rope
             if (segmentIndex < 0 || segmentIndex > nodeCount) return;
 
             chain.IsCut = true;
+            SfxPlayer.Play(SfxId.Slice);
+
+            if (_useSpringJoints)
+                SfxPlayer.Play(SfxId.Spring);
 
             // segmentIndex 0 是起始锚点到第一个节点；之后是节点之间；最后一段是末节点到末端对象。
             AnchoredJoint2D jointToDestroy = segmentIndex == 0

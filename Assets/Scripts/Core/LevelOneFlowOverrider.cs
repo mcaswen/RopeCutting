@@ -1,6 +1,7 @@
 using System.Collections;
 using Gameplay.Interaction;
 using Gameplay.Rope;
+using Systems;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -51,7 +52,7 @@ namespace Core
                 _lampConnectable.AllRopesCut += HandleLampDropped;
 
             if (_volumeButton != null)
-                _volumeButton.OnRotated.AddListener(UpdateLampFailureCancelState);
+                _volumeButton.OnRotated.AddListener(HandleVolumeButtonRotated);
         }
 
         protected override void OnDisable()
@@ -66,14 +67,14 @@ namespace Core
                 _lampConnectable.AllRopesCut -= HandleLampDropped;
 
             if (_volumeButton != null)
-                _volumeButton.OnRotated.RemoveListener(UpdateLampFailureCancelState);
+                _volumeButton.OnRotated.RemoveListener(HandleVolumeButtonRotated);
 
             base.OnDisable();
         }
 
         private void Start()
         {
-            UpdateLampFailureCancelState();
+            UpdateLampFailureCancelState(false);
         }
 
         protected override bool ShouldFailFromDetector(Collider2D other)
@@ -111,15 +112,30 @@ namespace Core
 
         private void UpdateLampFailureCancelState()
         {
+            UpdateLampFailureCancelState(false);
+        }
+
+        private void HandleVolumeButtonRotated()
+        {
+            UpdateLampFailureCancelState(true);
+        }
+
+        private void UpdateLampFailureCancelState(bool playDing)
+        {
+            bool wasCanceled = _lampFailureCanceled;
+
             if (_volumeButton != null && _volumeButton.IsAtLocalZAngle(_cancelLampFailureAngle, _rotationTolerance))
                 _lampFailureCanceled = true;
+
+            if (playDing && _lampFailureCanceled && !wasCanceled)
+                SfxPlayer.Play(SfxId.Ding);
         }
 
         private void HandleLampDropped(Vector3 hitPoint)
         {
             if (!IsPlaying) return;
 
-            UpdateLampFailureCancelState();
+            UpdateLampFailureCancelState(false);
 
             if (_lampFailureCanceled)
             {
@@ -137,6 +153,7 @@ namespace Core
 
             _failureCausedByLamp = true;
             _lampFailureSequenceStarted = true;
+            SfxPlayer.Play(SfxId.GlassBreak);
             LockPlayerInput();
             _lampFailureRoutine = StartCoroutine(LampFailureSequence());
         }

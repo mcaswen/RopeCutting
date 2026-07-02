@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Core;
+using Systems;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -200,6 +201,7 @@ namespace Gameplay.Interaction
             _isConnected = true;
             _moveRoutine = null;
             PlayerInputLock.Unlock(this);
+            SfxPlayer.Play(SfxId.Click);
             _onConnected?.Invoke();
         }
 

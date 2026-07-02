@@ -41,12 +41,15 @@ namespace Systems
 
         private Material _material;
         private Coroutine _playRoutine;
+        private float _currentIntensity;
 
         public float Intensity
         {
             get => _intensity;
             set => _intensity = Mathf.Clamp01(value);
         }
+
+        public float CurrentIntensity => _currentIntensity;
 
         private void OnEnable()
         {
@@ -69,12 +72,12 @@ namespace Systems
 
         public void Play()
         {
-            Play(_defaultDuration, 1f);
+            Play(_defaultDuration, _intensity);
         }
 
         public void Play(float duration)
         {
-            Play(duration, 1f);
+            Play(duration, _intensity);
         }
 
         public void Play(float duration, float strength)
@@ -93,29 +96,29 @@ namespace Systems
                 _playRoutine = null;
             }
 
-            _intensity = 0f;
+            _currentIntensity = 0f;
         }
 
         private IEnumerator PlayRoutine(float duration, float strength)
         {
             float elapsed = 0f;
-            _intensity = strength;
+            _currentIntensity = strength;
 
             while (elapsed < duration)
             {
                 elapsed += _useUnscaledTime ? Time.unscaledDeltaTime : Time.deltaTime;
                 float t = Mathf.Clamp01(elapsed / duration);
-                _intensity = Mathf.Lerp(strength, 0f, t * t * (3f - 2f * t));
+                _currentIntensity = Mathf.Lerp(strength, 0f, t * t * (3f - 2f * t));
                 yield return null;
             }
 
-            _intensity = 0f;
+            _currentIntensity = 0f;
             _playRoutine = null;
         }
 
         private void OnRenderImage(RenderTexture source, RenderTexture destination)
         {
-            if (_intensity <= 0f || !EnsureMaterial())
+            if (_currentIntensity <= 0f || !EnsureMaterial())
             {
                 Graphics.Blit(source, destination);
                 return;
@@ -148,7 +151,7 @@ namespace Systems
         {
             float time = _useUnscaledTime ? Time.unscaledTime : Time.time;
 
-            _material.SetFloat(IntensityId, _intensity);
+            _material.SetFloat(IntensityId, _currentIntensity);
             _material.SetFloat(RgbSplitId, _rgbSplit);
             _material.SetFloat(HorizontalJitterId, _horizontalJitter);
             _material.SetFloat(LeftRightShakeId, _leftRightShake);

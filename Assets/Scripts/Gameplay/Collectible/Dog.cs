@@ -1,5 +1,6 @@
 using Core;
 using Gameplay.Rope;
+using Systems;
 using UnityEngine;
 
 namespace Gameplay.Collectible
@@ -53,6 +54,7 @@ namespace Gameplay.Collectible
             if (_animator != null)
                 _animator.SetBool("IsRunning", true);
 
+            SfxPlayer.Play(SfxId.Bark);
             ReleaseInitialConnection();
         }
 

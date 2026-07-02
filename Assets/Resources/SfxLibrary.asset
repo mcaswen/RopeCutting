@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95ba3a1544a344a5a9c3176c117f506b, type: 3}
+  m_Name: SfxLibrary
+  m_EditorClassIdentifier: 
+  _slice: {fileID: 8300000, guid: 7337f8a7ba6a07440b8e8c47d958bf90, type: 3}
+  _drop: {fileID: 8300000, guid: 8ff8b1ada1c538442ae16fd96345a60e, type: 3}
+  _chew: {fileID: 8300000, guid: 056c98172fc1e4c4eb4a859da819add8, type: 3}
+  _glassBreak: {fileID: 8300000, guid: 2d1e9cd8070fc0f4286ed215ea095887, type: 3}
+  _ding: {fileID: 8300000, guid: 46cffd702a62769498940b0fa91b5e05, type: 3}
+  _win: {fileID: 8300000, guid: 2f87047e62bfa164490ec524eb2dd51e, type: 3}
+  _lose: {fileID: 8300000, guid: 2edc9cadbcf99a546a8a2498eeb601dd, type: 3}
+  _bark: {fileID: 8300000, guid: 5521d4cb6521957458c283fc5cbcc9c5, type: 3}
+  _spring: {fileID: 8300000, guid: ed6061d099c172f43869a84f7ca5d93e, type: 3}
+  _click: {fileID: 8300000, guid: f8a4b967aff2a6240b5f7e688fd2ffce, type: 3}
+  _shortCircuit: {fileID: 8300000, guid: 4d4ea0641bb7c0e4f85dc1e69c4fc93d, type: 3}
+  _wingFlap: {fileID: 8300000, guid: 50f1b3eacc53f2b4f8f6bd753a44b177, type: 3}
+  _volume: 1
+  _bgm: {fileID: 8300000, guid: bb98fc7831a2ddf43be6fc57ddb2f3f0, type: 3}
+  _bgmVolume: 0.5
+  _sliceStartOffset: 0.22305216
+  _dropStartOffset: 0.101782314
+  _chewStartOffset: 0
+  _glassBreakStartOffset: 0.061827663
+  _dingStartOffset: 0.113097504
+  _winStartOffset: 0.13436735
+  _loseStartOffset: 0.51525
+  _barkStartOffset: 0.14954546
+  _springStartOffset: 0.44434467
+  _clickStartOffset: 0.1606712
+  _shortCircuitStartOffset: 0.06620408
+  _wingFlapStartOffset: 0.83672565

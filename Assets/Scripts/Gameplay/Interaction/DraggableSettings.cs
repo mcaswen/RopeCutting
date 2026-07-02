@@ -1,4 +1,5 @@
 using System.Collections;
+using Systems;
 using UnityEngine;
 
 namespace Gameplay.Interaction
@@ -92,6 +93,7 @@ namespace Gameplay.Interaction
         private void CreateStick()
         {
             _stickCreated = true;
+            SfxPlayer.Play(SfxId.Click);
 
             Vector3 start = transform.position;
             Vector3 end = _anchor5.position;

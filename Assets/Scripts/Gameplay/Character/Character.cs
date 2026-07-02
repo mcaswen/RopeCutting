@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using Gameplay.Collectible;
+using Systems;
 
 namespace Gameplay.Character
 {
@@ -23,6 +24,7 @@ namespace Gameplay.Character
         {
             if (other.TryGetComponent<Candy>(out _))
             {
+                SfxPlayer.Play(SfxId.Chew);
                 OnCandyCollected?.Invoke();
                 Destroy(other.gameObject);
             }

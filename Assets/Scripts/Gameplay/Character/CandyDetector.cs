@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using Gameplay.Collectible;
 
@@ -37,6 +38,18 @@ namespace Gameplay.Character
         private void OnCharacterCollectedCandy()
         {
             SetCandyInRange(false);
+            if (_animator != null)
+            {
+                _animator.SetBool("IsChewing", true);
+                StartCoroutine(ResetChewingAfterDelay());
+            }
+        }
+
+        private IEnumerator ResetChewingAfterDelay()
+        {
+            yield return new WaitForSeconds(0.67f);
+            if (_animator != null)
+                _animator.SetBool("IsChewing", false);
         }
 
         private void OnTriggerEnter2D(Collider2D other)

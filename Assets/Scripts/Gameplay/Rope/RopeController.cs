@@ -37,6 +37,13 @@ namespace Gameplay.Rope
         [SerializeField] private float _nodeMass = 0.05f;
         [SerializeField] private float _nodeRadius = 0.15f;
         [SerializeField] private float _ropeWidth = 0.08f;
+
+        [Header("Spring Mode")]
+        [SerializeField] private bool _useSpringJoints;
+        [SerializeField, Range(0.1f, 2f)] private float _springRestLengthRatio = 1f;
+        [SerializeField] private float _springFrequency = 5f;
+        [SerializeField] private float _springDampingRatio = 0.3f;
+
         [SerializeField, Min(0f)] private float _cutFadeDelay = 0.15f;
         [SerializeField, Min(0.01f)] private float _cutFadeDuration = 0.4f;
 
@@ -51,8 +58,8 @@ namespace Gameplay.Rope
             public Vector2 ConnectableLocalAttachPoint;
             public LineRenderer LineRenderer;
             public Gradient OriginalGradient;
-            public DistanceJoint2D StartAnchorJoint;
-            public DistanceJoint2D EndJoint;
+            public AnchoredJoint2D StartAnchorJoint;
+            public AnchoredJoint2D EndJoint;
             public bool UsesWorldConnectableAnchor;
             public readonly List<GameObject> Nodes = new List<GameObject>();
             public bool IsCut;
@@ -199,15 +206,11 @@ namespace Gameplay.Rope
             }
 
             // 设置关节连接
-            DistanceJoint2D anchorJoint = chain.StartAnchorPoint.gameObject.AddComponent<DistanceJoint2D>();
-            anchorJoint.connectedBody = chain.Nodes[0].GetComponent<Rigidbody2D>();
-            anchorJoint.autoConfigureDistance = false;
-            anchorJoint.distance = segmentDistance;
-            chain.StartAnchorJoint = anchorJoint;
+            chain.StartAnchorJoint = CreateJoint(chain.StartAnchorPoint.gameObject, chain.Nodes[0].GetComponent<Rigidbody2D>(), segmentDistance);
 
             for (int i = 0; i < _nodeCount; i++)
             {
-                DistanceJoint2D joint = chain.Nodes[i].AddComponent<DistanceJoint2D>();
+                AnchoredJoint2D joint = CreateJoint(chain.Nodes[i]);
 
                 if (i < _nodeCount - 1)
                 {
@@ -239,8 +242,59 @@ namespace Gameplay.Rope
                     chain.EndJoint = joint;
                 }
 
-                joint.autoConfigureDistance = false;
-                joint.distance = segmentDistance;
+                ConfigureJoint(joint, segmentDistance);
+            }
+        }
+
+        private AnchoredJoint2D CreateJoint(GameObject owner, Rigidbody2D connectedBody, float distance)
+        {
+            if (_useSpringJoints)
+            {
+                SpringJoint2D sj = owner.AddComponent<SpringJoint2D>();
+                sj.connectedBody = connectedBody;
+                sj.autoConfigureDistance = false;
+                sj.distance = distance * _springRestLengthRatio;
+                sj.frequency = _springFrequency;
+                sj.dampingRatio = _springDampingRatio;
+                return sj;
+            }
+
+            DistanceJoint2D dj = owner.AddComponent<DistanceJoint2D>();
+            dj.connectedBody = connectedBody;
+            dj.autoConfigureDistance = false;
+            dj.distance = distance;
+            return dj;
+        }
+
+        private AnchoredJoint2D CreateJoint(GameObject owner)
+        {
+            if (_useSpringJoints)
+            {
+                SpringJoint2D sj = owner.AddComponent<SpringJoint2D>();
+                sj.autoConfigureDistance = false;
+                sj.distance = 0f;
+                sj.frequency = _springFrequency;
+                sj.dampingRatio = _springDampingRatio;
+                return sj;
+            }
+
+            DistanceJoint2D dj = owner.AddComponent<DistanceJoint2D>();
+            dj.autoConfigureDistance = false;
+            dj.distance = 0f;
+            return dj;
+        }
+
+        private void ConfigureJoint(AnchoredJoint2D joint, float distance)
+        {
+            if (joint is DistanceJoint2D dj)
+            {
+                dj.autoConfigureDistance = false;
+                dj.distance = distance;
+            }
+            else if (joint is SpringJoint2D sj)
+            {
+                sj.autoConfigureDistance = false;
+                sj.distance = distance * _springRestLengthRatio;
             }
         }
 
@@ -403,9 +457,9 @@ namespace Gameplay.Rope
             chain.IsCut = true;
 
             // segmentIndex 0 是起始锚点到第一个节点；之后是节点之间；最后一段是末节点到末端对象。
-            DistanceJoint2D jointToDestroy = segmentIndex == 0
+            AnchoredJoint2D jointToDestroy = segmentIndex == 0
                 ? chain.StartAnchorJoint
-                : chain.Nodes[segmentIndex - 1].GetComponent<DistanceJoint2D>();
+                : chain.Nodes[segmentIndex - 1].GetComponent<AnchoredJoint2D>();
             if (jointToDestroy != null)
             {
                 Destroy(jointToDestroy);

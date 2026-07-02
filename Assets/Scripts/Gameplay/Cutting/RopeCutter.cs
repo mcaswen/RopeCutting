@@ -40,7 +40,7 @@ namespace Gameplay.Cutting
                 return;
             }
 
-            if (InteractiveButton.IsPointerCaptured)
+            if (InteractiveButton.IsPointerCaptured || DraggableSettings.IsDraggingAny)
             {
                 _isDragging = false;
                 return;
@@ -49,7 +49,7 @@ namespace Gameplay.Cutting
             // 鼠标输入（编辑器测试）
             if (Input.GetMouseButtonDown(0))
             {
-                if (InteractiveButton.IsPointerOverAny(Input.mousePosition, _mainCamera))
+                if (InteractiveButton.IsPointerOverAny(Input.mousePosition, _mainCamera) || DraggableSettings.IsPointerOverAny(Input.mousePosition, _mainCamera))
                 {
                     _isBlockedByInteractive = true;
                     _isDragging = false;
@@ -81,7 +81,7 @@ namespace Gameplay.Cutting
 
                 if (touch.phase == TouchPhase.Began)
                 {
-                    if (InteractiveButton.IsPointerOverAny(touch.position, _mainCamera))
+                    if (InteractiveButton.IsPointerOverAny(touch.position, _mainCamera) || DraggableSettings.IsPointerOverAny(touch.position, _mainCamera))
                     {
                         _isBlockedByInteractive = true;
                         _isDragging = false;

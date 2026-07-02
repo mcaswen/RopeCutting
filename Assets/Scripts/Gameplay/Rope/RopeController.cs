@@ -61,13 +61,13 @@ namespace Gameplay.Rope
             public float FadeTimer;
         }
 
-        private void Awake()
+        protected virtual void Awake()
         {
             ApplyLegacyEndpointFallback();
             _lineRenderer = GetComponent<LineRenderer>();
         }
 
-        private void Start()
+        protected virtual void Start()
         {
             CreateRopeChains();
         }
@@ -256,7 +256,7 @@ namespace Gameplay.Rope
             lineRenderer.textureMode = LineTextureMode.Stretch;
         }
 
-        private void Update()
+        protected virtual void Update()
         {
             if (_chains.Count == 0) return;
 
@@ -415,6 +415,7 @@ namespace Gameplay.Rope
                 _connectable.NotifyRopeCut(hitPoint);
 
             NotifyAnchorsCut(chain, hitPoint);
+            OnRopeCut(hitPoint, GetRemainingUncutChainCount());
 
             // 下半段节点构建为 RopeSegment（含 LineRenderer）
             List<GameObject> lowerNodes = new List<GameObject>();
@@ -452,6 +453,22 @@ namespace Gameplay.Rope
             }
 
             BeginChainFade(chain);
+        }
+
+        protected virtual void OnRopeCut(Vector3 hitPoint, int remainingUncutChainCount)
+        {
+        }
+
+        private int GetRemainingUncutChainCount()
+        {
+            int count = 0;
+            for (int i = 0; i < _chains.Count; i++)
+            {
+                if (!_chains[i].IsCut)
+                    count++;
+            }
+
+            return count;
         }
 
         private void BeginChainFade(RopeChain chain)
@@ -561,7 +578,7 @@ namespace Gameplay.Rope
             return (q.x - p.x) * (r.y - p.y) - (q.y - p.y) * (r.x - p.x);
         }
 
-        private void OnDestroy()
+        protected virtual void OnDestroy()
         {
             for (int chainIndex = _chains.Count - 1; chainIndex >= 0; chainIndex--)
             {

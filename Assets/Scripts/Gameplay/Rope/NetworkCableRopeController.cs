@@ -1,28 +1,25 @@
-using Gameplay.Rope;
 using Systems;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Gameplay.Collectible
+namespace Gameplay.Rope
 {
-    public class NetworkCableRopeConnectable : RopeConnectable
+    [RequireComponent(typeof(LineRenderer))]
+    public class NetworkCableRopeController : RopeController
     {
         [SerializeField] private ScreenGlitchEffect _screenGlitchEffect;
         [SerializeField] private float _glitchDuration = 1f;
         [SerializeField, Range(0f, 1f)] private float _glitchStrength = 1f;
         [SerializeField] private bool _findMainCameraEffect = true;
+        [SerializeField] private bool _triggerOnlyWhenAllChainsCut;
         [SerializeField] private UnityEvent _onGlitchStarted;
 
         private bool _hasTriggered;
 
-        protected override void OnAllRopesCut(Vector3 hitPoint)
-        {
-            TriggerGlitch();
-        }
-
-        private void TriggerGlitch()
+        protected override void OnRopeCut(Vector3 hitPoint, int remainingUncutChainCount)
         {
             if (_hasTriggered) return;
+            if (_triggerOnlyWhenAllChainsCut && remainingUncutChainCount > 0) return;
 
             _hasTriggered = true;
 

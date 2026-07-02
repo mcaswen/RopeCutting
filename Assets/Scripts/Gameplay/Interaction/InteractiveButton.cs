@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Core;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -86,6 +87,14 @@ namespace Gameplay.Interaction
 
         private void Update()
         {
+            if (PlayerInputLock.IsLocked)
+            {
+                if (_capturedButton == this)
+                    ReleasePointer(false);
+
+                return;
+            }
+
             if (_capturedButton != null && _capturedButton != this)
                 return;
 
@@ -283,6 +292,9 @@ namespace Gameplay.Interaction
 
         public static bool IsPointerOverAny(Vector2 screenPosition, Camera fallbackCamera)
         {
+            if (PlayerInputLock.IsLocked)
+                return false;
+
             for (int i = 0; i < Instances.Count; i++)
             {
                 InteractiveButton button = Instances[i];

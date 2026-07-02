@@ -1,6 +1,5 @@
 using UnityEngine;
 using Gameplay.Collectible;
-using UI;
 
 namespace Gameplay.Character
 {
@@ -13,7 +12,6 @@ namespace Gameplay.Character
     {
         [SerializeField] private Animator _animator;
         [SerializeField] private Character _character;
-        [SerializeField] private ResultPanel _resultPanel;
 
         private void Awake()
         {
@@ -38,16 +36,14 @@ namespace Gameplay.Character
 
         private void OnCharacterCollectedCandy()
         {
-            _animator.SetBool("IsCandyInRange", false);
-            if (_resultPanel != null)
-                _resultPanel.ShowVictory();
+            SetCandyInRange(false);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (other.TryGetComponent<Candy>(out _))
             {
-                _animator.SetBool("IsCandyInRange", true);
+                SetCandyInRange(true);
             }
         }
 
@@ -55,8 +51,14 @@ namespace Gameplay.Character
         {
             if (other.TryGetComponent<Candy>(out _))
             {
-                _animator.SetBool("IsCandyInRange", false);
+                SetCandyInRange(false);
             }
+        }
+
+        private void SetCandyInRange(bool isInRange)
+        {
+            if (_animator != null)
+                _animator.SetBool("IsCandyInRange", isInRange);
         }
     }
 }

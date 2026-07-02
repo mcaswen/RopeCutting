@@ -1,4 +1,5 @@
 using UnityEngine;
+using Core;
 using Gameplay.Collectible;
 using UI;
 
@@ -12,6 +13,8 @@ namespace Gameplay
     {
         [SerializeField] private ResultPanel _resultPanel;
 
+        private bool _lockedPlayerInput;
+
         private void Awake()
         {
             Collider2D collider = GetComponent<Collider2D>();
@@ -22,9 +25,31 @@ namespace Gameplay
         {
             if (other.TryGetComponent<Candy>(out _))
             {
+                LockPlayerInput();
                 _resultPanel.ShowDefeat();
                 Destroy(other.gameObject);
             }
+        }
+
+        private void OnDestroy()
+        {
+            UnlockPlayerInput();
+        }
+
+        private void LockPlayerInput()
+        {
+            if (_lockedPlayerInput) return;
+
+            PlayerInputLock.Lock(this);
+            _lockedPlayerInput = true;
+        }
+
+        private void UnlockPlayerInput()
+        {
+            if (!_lockedPlayerInput) return;
+
+            PlayerInputLock.Unlock(this);
+            _lockedPlayerInput = false;
         }
     }
 }

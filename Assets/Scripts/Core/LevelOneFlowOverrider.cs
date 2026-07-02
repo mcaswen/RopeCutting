@@ -137,6 +137,7 @@ namespace Core
 
             _failureCausedByLamp = true;
             _lampFailureSequenceStarted = true;
+            LockPlayerInput();
             _lampFailureRoutine = StartCoroutine(LampFailureSequence());
         }
 

@@ -1,3 +1,4 @@
+using System.Collections;
 using Gameplay.Character;
 using Gameplay.Collectible;
 using UI;
@@ -18,12 +19,15 @@ namespace Core
         [SerializeField] private Character _character;
         [SerializeField] private Candy _candy;
         [SerializeField] private ResultPanel _resultPanel;
+        [SerializeField, Min(0f)] private float _victoryResultDelay = 1f;
 
         [Header("Events")]
         [SerializeField] private UnityEvent _onVictory;
         [SerializeField] private UnityEvent _onFailure;
 
         private LevelState _state = LevelState.Playing;
+        private Coroutine _victoryResultRoutine;
+        private bool _lockedPlayerInput;
 
         public LevelState State => _state;
         public bool IsPlaying => _state == LevelState.Playing;
@@ -44,6 +48,9 @@ namespace Core
 
         protected virtual void OnDisable()
         {
+            CancelVictoryResultRoutine();
+            UnlockPlayerInput();
+
             if (_character != null)
                 _character.OnCandyCollected.RemoveListener(CompleteVictory);
         }
@@ -61,6 +68,7 @@ namespace Core
             if (!IsPlaying) return;
 
             _state = LevelState.Victory;
+            LockPlayerInput();
             OnVictory();
         }
 
@@ -69,6 +77,7 @@ namespace Core
             if (!IsPlaying) return;
 
             _state = LevelState.Failure;
+            LockPlayerInput();
             OnFailure();
         }
 
@@ -83,6 +92,24 @@ namespace Core
 
         protected virtual void OnVictory()
         {
+            if (_victoryResultDelay <= 0f)
+            {
+                ShowVictoryResult();
+                return;
+            }
+
+            _victoryResultRoutine = StartCoroutine(ShowVictoryResultAfterDelay());
+        }
+
+        private IEnumerator ShowVictoryResultAfterDelay()
+        {
+            yield return new WaitForSeconds(_victoryResultDelay);
+            _victoryResultRoutine = null;
+            ShowVictoryResult();
+        }
+
+        private void ShowVictoryResult()
+        {
             if (_resultPanel != null)
                 _resultPanel.ShowVictory();
 
@@ -92,6 +119,8 @@ namespace Core
 
         protected virtual void OnFailure()
         {
+            CancelVictoryResultRoutine();
+
             if (_resultPanel != null)
                 _resultPanel.ShowFailure();
 
@@ -106,6 +135,30 @@ namespace Core
             Transform colliderTransform = collider.transform;
             Transform targetTransform = target.transform;
             return colliderTransform == targetTransform || colliderTransform.IsChildOf(targetTransform);
+        }
+
+        private void CancelVictoryResultRoutine()
+        {
+            if (_victoryResultRoutine == null) return;
+
+            StopCoroutine(_victoryResultRoutine);
+            _victoryResultRoutine = null;
+        }
+
+        protected void LockPlayerInput()
+        {
+            if (_lockedPlayerInput) return;
+
+            PlayerInputLock.Lock(this);
+            _lockedPlayerInput = true;
+        }
+
+        protected void UnlockPlayerInput()
+        {
+            if (!_lockedPlayerInput) return;
+
+            PlayerInputLock.Unlock(this);
+            _lockedPlayerInput = false;
         }
     }
 }

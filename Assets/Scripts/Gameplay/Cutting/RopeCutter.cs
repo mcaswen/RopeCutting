@@ -1,4 +1,5 @@
 using UnityEngine;
+using Core;
 using Gameplay.Interaction;
 using Gameplay.Rope;
 
@@ -32,6 +33,13 @@ namespace Gameplay.Cutting
 
         private void HandleInput()
         {
+            if (PlayerInputLock.IsLocked)
+            {
+                _isDragging = false;
+                _isBlockedByInteractive = false;
+                return;
+            }
+
             if (InteractiveButton.IsPointerCaptured)
             {
                 _isDragging = false;

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Core;
 
 namespace UI
 {
@@ -14,6 +15,8 @@ namespace UI
         [SerializeField] private string _failureMessage = "Failed";
         [SerializeField] private string _victoryMessage = "胜利！";
         [SerializeField] private string _defeatMessage = "失败！";
+
+        private bool _isShowingResult;
 
         private void Awake()
         {
@@ -31,11 +34,20 @@ namespace UI
             }
         }
 
+        private void OnDisable()
+        {
+            if (!_isShowingResult) return;
+
+            _isShowingResult = false;
+            PlayerInputLock.Clear();
+        }
+
         /// <summary>
         /// 显示胜利结果
         /// </summary>
         public void ShowVictory()
         {
+            _isShowingResult = true;
             gameObject.SetActive(true);
             if (_resultText != null)
             {
@@ -45,6 +57,7 @@ namespace UI
 
         public void ShowFailure()
         {
+            _isShowingResult = true;
             gameObject.SetActive(true);
             if (_resultText != null)
             {
@@ -57,6 +70,7 @@ namespace UI
         /// </summary>
         public void ShowDefeat()
         {
+            _isShowingResult = true;
             gameObject.SetActive(true);
             if (_resultText != null)
             {
@@ -69,6 +83,7 @@ namespace UI
         /// </summary>
         private void RestartLevel()
         {
+            PlayerInputLock.Clear();
             UnityEngine.SceneManagement.SceneManager.LoadScene(
                 UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
         }

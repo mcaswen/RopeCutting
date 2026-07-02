@@ -18,6 +18,10 @@ namespace Gameplay.Rope
         private float _fadeDelay;
         private float _fadeDuration = 0.4f;
         private float _fadeTimer;
+        private RopeVisualStyle _visualStyle = RopeVisualStyle.Straight;
+        private int _springTurnsPerSegment = 1;
+        private int _springSamplesPerTurn = 8;
+        private float _springAmplitude = 0.12f;
         private bool _hasConnectable;
 
         private void Awake()
@@ -31,6 +35,10 @@ namespace Gameplay.Rope
         public void Initialize(
             List<GameObject> lowerNodes,
             float ropeWidth,
+            RopeVisualStyle visualStyle,
+            int springTurnsPerSegment,
+            int springSamplesPerTurn,
+            float springAmplitude,
             Material ropeMaterial,
             Gradient ropeColorGradient,
             float fadeDelay,
@@ -42,6 +50,10 @@ namespace Gameplay.Rope
             _connectableTransform = connectableTransform;
             _connectableLocalAttachPoint = connectableLocalAttachPoint;
             _hasConnectable = connectableTransform != null;
+            _visualStyle = visualStyle;
+            _springTurnsPerSegment = Mathf.Max(1, springTurnsPerSegment);
+            _springSamplesPerTurn = Mathf.Max(2, springSamplesPerTurn);
+            _springAmplitude = Mathf.Max(0f, springAmplitude);
             _baseColorGradient = RopeLineFade.CloneGradient(ropeColorGradient);
             _fadeDelay = Mathf.Max(0f, fadeDelay);
             _fadeDuration = Mathf.Max(0.01f, fadeDuration);
@@ -52,7 +64,7 @@ namespace Gameplay.Rope
                 _nodes[i].transform.SetParent(transform);
             }
 
-            _lineRenderer.positionCount = GetPointCount();
+            _lineRenderer.positionCount = 0;
             _lineRenderer.startWidth = ropeWidth;
             _lineRenderer.endWidth = ropeWidth;
             _lineRenderer.useWorldSpace = true;
@@ -94,18 +106,18 @@ namespace Gameplay.Rope
             }
 
             // 节点链 → 可连接物，包含完整下端连线
-            int pointCount = GetPointCount();
-            if (_lineRenderer.positionCount != pointCount)
-                _lineRenderer.positionCount = pointCount;
+            Vector3[] visualPositions = RopeLineShape.BuildPositions(
+                GetCenterlinePositions(),
+                _visualStyle,
+                _springTurnsPerSegment,
+                _springSamplesPerTurn,
+                _springAmplitude);
 
-            for (int i = 0; i < _nodes.Count; i++)
-            {
-                if (_nodes[i] != null)
-                    _lineRenderer.SetPosition(i, _nodes[i].transform.position);
-            }
+            if (_lineRenderer.positionCount != visualPositions.Length)
+                _lineRenderer.positionCount = visualPositions.Length;
 
-            if (_connectableTransform != null)
-                _lineRenderer.SetPosition(pointCount - 1, _connectableTransform.TransformPoint(_connectableLocalAttachPoint));
+            for (int i = 0; i < visualPositions.Length; i++)
+                _lineRenderer.SetPosition(i, visualPositions[i]);
 
             UpdateFade();
         }
@@ -128,6 +140,36 @@ namespace Gameplay.Rope
             return nodeCount + (_connectableTransform != null ? 1 : 0);
         }
 
+        private Vector3[] GetCenterlinePositions()
+        {
+            int pointCount = GetPointCount();
+            Vector3[] positions = new Vector3[pointCount];
+
+            int writeIndex = 0;
+            for (int i = 0; i < _nodes.Count; i++)
+            {
+                if (_nodes[i] == null) continue;
+
+                positions[writeIndex] = _nodes[i].transform.position;
+                writeIndex++;
+            }
+
+            if (_connectableTransform != null)
+            {
+                positions[writeIndex] = _connectableTransform.TransformPoint(_connectableLocalAttachPoint);
+                writeIndex++;
+            }
+
+            if (writeIndex == positions.Length)
+                return positions;
+
+            Vector3[] compactPositions = new Vector3[writeIndex];
+            for (int i = 0; i < writeIndex; i++)
+                compactPositions[i] = positions[i];
+
+            return compactPositions;
+        }
+
         private void OnDestroy()
         {
             if (_nodes == null) return;
@@ -138,6 +180,114 @@ namespace Gameplay.Rope
                     Destroy(_nodes[i]);
                 }
             }
+        }
+    }
+
+    internal readonly struct RopeVisualSample
+    {
+        public RopeVisualSample(Vector3 position, int segmentIndex)
+        {
+            Position = position;
+            SegmentIndex = segmentIndex;
+        }
+
+        public readonly Vector3 Position;
+        public readonly int SegmentIndex;
+    }
+
+    internal static class RopeLineShape
+    {
+        public static Vector3[] BuildPositions(
+            IReadOnlyList<Vector3> centerlinePositions,
+            RopeVisualStyle visualStyle,
+            int springTurnsPerSegment,
+            int springSamplesPerTurn,
+            float springAmplitude)
+        {
+            RopeVisualSample[] samples = BuildSamples(
+                centerlinePositions,
+                visualStyle,
+                springTurnsPerSegment,
+                springSamplesPerTurn,
+                springAmplitude);
+
+            Vector3[] positions = new Vector3[samples.Length];
+            for (int i = 0; i < samples.Length; i++)
+                positions[i] = samples[i].Position;
+
+            return positions;
+        }
+
+        public static RopeVisualSample[] BuildSamples(
+            IReadOnlyList<Vector3> centerlinePositions,
+            RopeVisualStyle visualStyle,
+            int springTurnsPerSegment,
+            int springSamplesPerTurn,
+            float springAmplitude)
+        {
+            if (centerlinePositions == null || centerlinePositions.Count == 0)
+                return new RopeVisualSample[0];
+
+            if (centerlinePositions.Count == 1 || visualStyle == RopeVisualStyle.Straight || springAmplitude <= 0f)
+                return BuildStraightSamples(centerlinePositions);
+
+            return BuildSpringSamples(
+                centerlinePositions,
+                Mathf.Max(1, springTurnsPerSegment),
+                Mathf.Max(2, springSamplesPerTurn),
+                Mathf.Max(0f, springAmplitude));
+        }
+
+        private static RopeVisualSample[] BuildStraightSamples(IReadOnlyList<Vector3> centerlinePositions)
+        {
+            RopeVisualSample[] samples = new RopeVisualSample[centerlinePositions.Count];
+            int lastSegmentIndex = Mathf.Max(0, centerlinePositions.Count - 2);
+
+            for (int i = 0; i < centerlinePositions.Count; i++)
+            {
+                int segmentIndex = i == 0 ? 0 : Mathf.Min(i - 1, lastSegmentIndex);
+                samples[i] = new RopeVisualSample(centerlinePositions[i], segmentIndex);
+            }
+
+            return samples;
+        }
+
+        private static RopeVisualSample[] BuildSpringSamples(
+            IReadOnlyList<Vector3> centerlinePositions,
+            int turnsPerSegment,
+            int samplesPerTurn,
+            float amplitude)
+        {
+            int samplesPerSegment = Mathf.Max(2, turnsPerSegment * samplesPerTurn);
+            List<RopeVisualSample> samples = new List<RopeVisualSample>((centerlinePositions.Count - 1) * samplesPerSegment + 1);
+
+            for (int segmentIndex = 0; segmentIndex < centerlinePositions.Count - 1; segmentIndex++)
+            {
+                Vector3 start = centerlinePositions[segmentIndex];
+                Vector3 end = centerlinePositions[segmentIndex + 1];
+                Vector3 segment = end - start;
+
+                if (segment.sqrMagnitude <= Mathf.Epsilon)
+                    continue;
+
+                Vector3 normal = new Vector3(-segment.y, segment.x, 0f).normalized;
+
+                if (samples.Count == 0)
+                    samples.Add(new RopeVisualSample(start, segmentIndex));
+
+                for (int sampleIndex = 1; sampleIndex <= samplesPerSegment; sampleIndex++)
+                {
+                    float t = sampleIndex / (float)samplesPerSegment;
+                    float wave = Mathf.Sin(t * turnsPerSegment * Mathf.PI * 2f);
+                    Vector3 position = Vector3.Lerp(start, end, t) + normal * (wave * amplitude);
+                    samples.Add(new RopeVisualSample(position, segmentIndex));
+                }
+            }
+
+            if (samples.Count == 0)
+                return BuildStraightSamples(centerlinePositions);
+
+            return samples.ToArray();
         }
     }
 

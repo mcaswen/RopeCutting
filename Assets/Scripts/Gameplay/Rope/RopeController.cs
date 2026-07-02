@@ -6,6 +6,12 @@ using UnityEngine.Serialization;
 
 namespace Gameplay.Rope
 {
+    public enum RopeVisualStyle
+    {
+        Straight,
+        Spring
+    }
+
     /// <summary>
     /// 绳子控制器，管理物理节点链 + LineRenderer 视觉
     /// 绳子由一串 Rigidbody2D 节点通过 DistanceJoint2D 串联，
@@ -45,6 +51,13 @@ namespace Gameplay.Rope
         [SerializeField] private float _springFrequency = 5f;
         [SerializeField] private float _springDampingRatio = 0.3f;
 
+        [Header("Visual Shape")]
+        [SerializeField] private RopeVisualStyle _visualStyle = RopeVisualStyle.Straight;
+        [SerializeField, Min(1)] private int _springTurnsPerSegment = 1;
+        [SerializeField, Min(2)] private int _springSamplesPerTurn = 8;
+        [SerializeField, Min(0f)] private float _springAmplitude = 0.12f;
+
+        [Header("Cut Fade")]
         [SerializeField, Min(0f)] private float _cutFadeDelay = 0.15f;
         [SerializeField, Min(0.01f)] private float _cutFadeDuration = 0.4f;
 
@@ -340,7 +353,7 @@ namespace Gameplay.Rope
 
             UpdateWorldConnectableJoint(chain);
 
-            Vector3[] positions = GetRopePositions(chain, !chain.IsCut);
+            Vector3[] positions = GetVisualRopePositions(chain, !chain.IsCut);
             bool hasVisibleRope = positions.Length > 1;
 
             chain.LineRenderer.enabled = hasVisibleRope;
@@ -376,10 +389,10 @@ namespace Gameplay.Rope
             if (_chains.Count == 0)
                 return new Vector3[0];
 
-            return GetRopePositions(_chains[0], !_chains[0].IsCut);
+            return GetVisualRopePositions(_chains[0], !_chains[0].IsCut);
         }
 
-        private Vector3[] GetRopePositions(RopeChain chain, bool includeEndPoint)
+        private Vector3[] GetPhysicsRopePositions(RopeChain chain, bool includeEndPoint)
         {
             int pointCount = chain.Nodes.Count + 1 + (includeEndPoint ? 1 : 0);
             Vector3[] positions = new Vector3[pointCount];
@@ -392,6 +405,26 @@ namespace Gameplay.Rope
                 positions[pointCount - 1] = GetEndAttachWorldPoint(chain);
 
             return positions;
+        }
+
+        private Vector3[] GetVisualRopePositions(RopeChain chain, bool includeEndPoint)
+        {
+            return RopeLineShape.BuildPositions(
+                GetPhysicsRopePositions(chain, includeEndPoint),
+                _visualStyle,
+                _springTurnsPerSegment,
+                _springSamplesPerTurn,
+                _springAmplitude);
+        }
+
+        private RopeVisualSample[] GetCuttableRopeSamples(RopeChain chain, bool includeEndPoint)
+        {
+            return RopeLineShape.BuildSamples(
+                GetPhysicsRopePositions(chain, includeEndPoint),
+                _visualStyle,
+                _springTurnsPerSegment,
+                _springSamplesPerTurn,
+                _springAmplitude);
         }
 
         private Vector3 GetEndAttachWorldPoint(RopeChain chain)
@@ -416,15 +449,16 @@ namespace Gameplay.Rope
                 RopeChain chain = _chains[chainIndex];
                 if (chain.IsCut) continue;
 
-                Vector3[] ropePositions = GetRopePositions(chain, true);
-                for (int segmentIndex = 0; segmentIndex < ropePositions.Length - 1; segmentIndex++)
+                RopeVisualSample[] ropeSamples = GetCuttableRopeSamples(chain, true);
+                for (int visualSegmentIndex = 0; visualSegmentIndex < ropeSamples.Length - 1; visualSegmentIndex++)
                 {
-                    Vector2 ropeSegStart = ropePositions[segmentIndex];
-                    Vector2 ropeSegEnd = ropePositions[segmentIndex + 1];
+                    Vector2 ropeSegStart = ropeSamples[visualSegmentIndex].Position;
+                    Vector2 ropeSegEnd = ropeSamples[visualSegmentIndex + 1].Position;
 
                     if (SegmentsIntersect(lineStart, lineEnd, ropeSegStart, ropeSegEnd))
                     {
                         Vector2 hitPoint = GetIntersectionPoint(lineStart, lineEnd, ropeSegStart, ropeSegEnd);
+                        int segmentIndex = ropeSamples[visualSegmentIndex + 1].SegmentIndex;
                         CutChain(chain, hitPoint, segmentIndex);
                         return true;
                     }
@@ -509,6 +543,10 @@ namespace Gameplay.Rope
                 lowerSegment.Initialize(
                     lowerNodes,
                     _ropeWidth,
+                    _visualStyle,
+                    _springTurnsPerSegment,
+                    _springSamplesPerTurn,
+                    _springAmplitude,
                     chain.LineRenderer.sharedMaterial,
                     chain.OriginalGradient,
                     _cutFadeDelay,
@@ -685,6 +723,7 @@ namespace Gameplay.Rope
         public RopeConnectable ConnectedItem => _connectable;
         public Candy ConnectedCandy => _connectable as Candy;
         public RopeConnectionMode ConnectionMode => ResolveConnectionMode();
+        public RopeVisualStyle VisualStyle => _visualStyle;
         public Transform AnchorPoint => _startAnchorPoint;
         public Transform StartAnchorPoint => _startAnchorPoint;
         public Transform EndAnchorPoint => _endAnchorPoint;

@@ -253,7 +253,7 @@ namespace Gameplay.Rope
             lineRenderer.startWidth = _ropeWidth;
             lineRenderer.endWidth = _ropeWidth;
             lineRenderer.useWorldSpace = true;
-            lineRenderer.textureMode = LineTextureMode.Tile;
+            lineRenderer.textureMode = LineTextureMode.Stretch;
         }
 
         private void Update()

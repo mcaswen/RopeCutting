@@ -56,7 +56,7 @@ namespace Gameplay.Rope
             _lineRenderer.startWidth = ropeWidth;
             _lineRenderer.endWidth = ropeWidth;
             _lineRenderer.useWorldSpace = true;
-            _lineRenderer.textureMode = LineTextureMode.Tile;
+            _lineRenderer.textureMode = LineTextureMode.Stretch;
             _lineRenderer.material = ropeMaterial;
             _lineRenderer.colorGradient = RopeLineFade.CloneGradient(_baseColorGradient);
         }

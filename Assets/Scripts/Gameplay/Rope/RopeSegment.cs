@@ -12,7 +12,12 @@ namespace Gameplay.Rope
     {
         private LineRenderer _lineRenderer;
         private List<GameObject> _nodes;
-        private Transform _candyTransform;
+        private Transform _connectableTransform;
+        private Vector2 _connectableLocalAttachPoint;
+        private Gradient _baseColorGradient;
+        private float _fadeDelay;
+        private float _fadeDuration = 0.4f;
+        private float _fadeTimer;
 
         private void Awake()
         {
@@ -22,22 +27,36 @@ namespace Gameplay.Rope
         /// <summary>
         /// 接管切割后的下半段节点，配置 LineRenderer
         /// </summary>
-        public void Initialize(List<GameObject> lowerNodes, float ropeWidth, Material ropeMaterial, Transform candyTransform)
+        public void Initialize(
+            List<GameObject> lowerNodes,
+            float ropeWidth,
+            Material ropeMaterial,
+            Gradient ropeColorGradient,
+            float fadeDelay,
+            float fadeDuration,
+            Transform connectableTransform,
+            Vector2 connectableLocalAttachPoint = default)
         {
             _nodes = lowerNodes;
-            _candyTransform = candyTransform;
+            _connectableTransform = connectableTransform;
+            _connectableLocalAttachPoint = connectableLocalAttachPoint;
+            _baseColorGradient = RopeLineFade.CloneGradient(ropeColorGradient);
+            _fadeDelay = Mathf.Max(0f, fadeDelay);
+            _fadeDuration = Mathf.Max(0.01f, fadeDuration);
+            _fadeTimer = 0f;
 
             for (int i = 0; i < _nodes.Count; i++)
             {
                 _nodes[i].transform.SetParent(transform);
             }
 
-            _lineRenderer.positionCount = _nodes.Count + 1;
+            _lineRenderer.positionCount = GetPointCount();
             _lineRenderer.startWidth = ropeWidth;
             _lineRenderer.endWidth = ropeWidth;
             _lineRenderer.useWorldSpace = true;
             _lineRenderer.textureMode = LineTextureMode.Tile;
             _lineRenderer.material = ropeMaterial;
+            _lineRenderer.colorGradient = RopeLineFade.CloneGradient(_baseColorGradient);
         }
 
         private void Update()
@@ -65,8 +84,8 @@ namespace Gameplay.Rope
                 return;
             }
 
-            // 节点链 → 糖果，包含完整下端连线
-            int pointCount = _nodes.Count + 1;
+            // 节点链 → 可连接物，包含完整下端连线
+            int pointCount = GetPointCount();
             if (_lineRenderer.positionCount != pointCount)
                 _lineRenderer.positionCount = pointCount;
 
@@ -76,8 +95,28 @@ namespace Gameplay.Rope
                     _lineRenderer.SetPosition(i, _nodes[i].transform.position);
             }
 
-            if (_candyTransform != null)
-                _lineRenderer.SetPosition(pointCount - 1, _candyTransform.position);
+            if (_connectableTransform != null)
+                _lineRenderer.SetPosition(pointCount - 1, _connectableTransform.TransformPoint(_connectableLocalAttachPoint));
+
+            UpdateFade();
+        }
+
+        private void UpdateFade()
+        {
+            _fadeTimer += Time.deltaTime;
+
+            float fadeElapsed = Mathf.Max(0f, _fadeTimer - _fadeDelay);
+            float alphaMultiplier = 1f - Mathf.Clamp01(fadeElapsed / Mathf.Max(0.01f, _fadeDuration));
+            RopeLineFade.ApplyAlpha(_lineRenderer, _baseColorGradient, alphaMultiplier);
+
+            if (fadeElapsed >= _fadeDuration)
+                Destroy(gameObject);
+        }
+
+        private int GetPointCount()
+        {
+            int nodeCount = _nodes != null ? _nodes.Count : 0;
+            return nodeCount + (_connectableTransform != null ? 1 : 0);
         }
 
         private void OnDestroy()
@@ -90,6 +129,41 @@ namespace Gameplay.Rope
                     Destroy(_nodes[i]);
                 }
             }
+        }
+    }
+
+    internal static class RopeLineFade
+    {
+        public static Gradient CloneGradient(Gradient source)
+        {
+            Gradient gradient = new Gradient();
+            if (source == null)
+                return gradient;
+
+            gradient.SetKeys(source.colorKeys, source.alphaKeys);
+            gradient.mode = source.mode;
+            return gradient;
+        }
+
+        public static void ApplyAlpha(LineRenderer lineRenderer, Gradient baseGradient, float alphaMultiplier)
+        {
+            if (lineRenderer == null || baseGradient == null) return;
+
+            alphaMultiplier = Mathf.Clamp01(alphaMultiplier);
+            Gradient fadeGradient = new Gradient();
+            GradientAlphaKey[] baseAlphaKeys = baseGradient.alphaKeys;
+            GradientAlphaKey[] alphaKeys = new GradientAlphaKey[baseAlphaKeys.Length];
+
+            for (int i = 0; i < baseAlphaKeys.Length; i++)
+            {
+                alphaKeys[i] = new GradientAlphaKey(
+                    baseAlphaKeys[i].alpha * alphaMultiplier,
+                    baseAlphaKeys[i].time);
+            }
+
+            fadeGradient.SetKeys(baseGradient.colorKeys, alphaKeys);
+            fadeGradient.mode = baseGradient.mode;
+            lineRenderer.colorGradient = fadeGradient;
         }
     }
 }

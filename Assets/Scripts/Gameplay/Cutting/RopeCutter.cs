@@ -40,7 +40,9 @@ namespace Gameplay.Cutting
                 return;
             }
 
-            if (InteractiveButton.IsPointerCaptured || UsbCablePlugInteraction.IsPointerCaptured)
+            if (InteractiveButton.IsPointerCaptured
+                || UsbCablePlugInteraction.IsPointerCaptured
+                || DraggableSettings.IsDraggingAny)
             {
                 _isDragging = false;
                 return;
@@ -50,7 +52,8 @@ namespace Gameplay.Cutting
             if (Input.GetMouseButtonDown(0))
             {
                 if (InteractiveButton.IsPointerOverAny(Input.mousePosition, _mainCamera)
-                    || UsbCablePlugInteraction.IsPointerOverAny(Input.mousePosition, _mainCamera))
+                    || UsbCablePlugInteraction.IsPointerOverAny(Input.mousePosition, _mainCamera)
+                    || DraggableSettings.IsPointerOverAny(Input.mousePosition, _mainCamera))
                 {
                     _isBlockedByInteractive = true;
                     _isDragging = false;
@@ -83,7 +86,8 @@ namespace Gameplay.Cutting
                 if (touch.phase == TouchPhase.Began)
                 {
                     if (InteractiveButton.IsPointerOverAny(touch.position, _mainCamera)
-                        || UsbCablePlugInteraction.IsPointerOverAny(touch.position, _mainCamera))
+                        || UsbCablePlugInteraction.IsPointerOverAny(touch.position, _mainCamera)
+                        || DraggableSettings.IsPointerOverAny(touch.position, _mainCamera))
                     {
                         _isBlockedByInteractive = true;
                         _isDragging = false;

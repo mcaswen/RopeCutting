@@ -18,22 +18,6 @@ namespace UI
 
         private bool _isShowingResult;
 
-        private void Awake()
-        {
-            if (_restartButton != null)
-            {
-                _restartButton.onClick.AddListener(RestartLevel);
-            }
-        }
-
-        private void OnDestroy()
-        {
-            if (_restartButton != null)
-            {
-                _restartButton.onClick.RemoveListener(RestartLevel);
-            }
-        }
-
         private void OnDisable()
         {
             if (!_isShowingResult) return;
@@ -53,6 +37,7 @@ namespace UI
             {
                 _resultText.text = _victoryMessage;
             }
+            RegisterRestartListener();
         }
 
         public void ShowFailure()
@@ -63,6 +48,7 @@ namespace UI
             {
                 _resultText.text = _failureMessage;
             }
+            RegisterRestartListener();
         }
 
         /// <summary>
@@ -76,6 +62,15 @@ namespace UI
             {
                 _resultText.text = _defeatMessage;
             }
+            RegisterRestartListener();
+        }
+
+        private void RegisterRestartListener()
+        {
+            if (_restartButton == null) return;
+
+            _restartButton.onClick.RemoveListener(RestartLevel);
+            _restartButton.onClick.AddListener(RestartLevel);
         }
 
         /// <summary>

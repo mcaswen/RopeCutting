@@ -1,0 +1,45 @@
+﻿sequenceId	description	lineIndex	lineType	speaker	zh	en	waitBefore	waitAfter	autoAdvance	emotion	voiceClip	expectedAudioName
+start_intro	开始界面开场	01	Dialogue	Narrator	欢迎来到《只是割绳子》！	Welcome to Just Cut The Rope ！	0	0.15	true		empty	VO_start_intro_01_narrator.mp3
+start_intro	开始界面开场	02	Dialogue	Narrator	游戏规则非常简单。	The rules are pretty simple.	0	0.15	true		empty	VO_start_intro_02_narrator.mp3
+start_intro	开始界面开场	03	Dialogue	Narrator	它负责吃。	It eats.	0	0.15	true		empty	VO_start_intro_03_narrator.mp3
+start_intro	开始界面开场	04	Dialogue	Narrator	你负责割。	You cut.	0	0.15	true		empty	VO_start_intro_04_narrator.mp3
+start_intro	开始界面开场	05	Dialogue	Narrator	我们一起努力！	Let’s work together!	0	0.8	true		empty	VO_start_intro_05_narrator.mp3
+start_intro	开始界面开场	06	Dialogue	Narrator	……应该不会出什么事吧？	…Hope nothing goes wrong, right?	0	0.2	true		empty	VO_start_intro_06_narrator.mp3
+level1_intro	第一关进入	01	Dialogue	Narrator		Alright alright, you actually made it to the first level. It’s all yours now.	0	0.2	true		empty	VO_level1_intro_01_narrator.mp3
+level1_light_cut	第一关切掉灯	01	Dialogue	Narrator		Whoa what are you doing?! Why’d you turn my light off!!	0	0.15	true	panic	empty	VO_level1_light_cut_01_narrator.mp3
+level1_light_cut	第一关切掉灯	02	Dialogue	Narrator		You better have a way to turn it back on!!	0	0.2	true	panic	empty	VO_level1_light_cut_02_narrator.mp3
+level1_light_tap_no_light	第一关点了几下仍然没灯	01	Dialogue	Narrator		Where’s the light!! Why isn’t it on yet!	0	0.15	true	panic	empty	VO_level1_light_tap_no_light_01_narrator.mp3
+level1_light_tap_no_light	第一关点了几下仍然没灯	02	Dialogue	Narrator		Thought you were good, gonna get stuck right here?	0	0.2	true	taunt	empty	VO_level1_light_tap_no_light_02_narrator.mp3
+level1_light_restored	第一关灯重新打开	01	Dialogue	Narrator		Okay okay, you win. Let’s keep going.	0	0.2	true	relieved	empty	VO_level1_light_restored_01_narrator.mp3
+level1_complete	第一关完成	01	Dialogue	Narrator		Didn’t think you’d do that well. Keep going.	0	0.15	true	surprised	empty	VO_level1_complete_01_narrator.mp3
+level1_complete	第一关完成	02	Dialogue	Narrator		Hurry up and feed my bird!	0	0.2	true	urgent	empty	VO_level1_complete_02_narrator.mp3
+level2_intro	第二关进入	01	Dialogue	Narrator		See that little bird in the bottom left corner? It’s starving right now, hurry up and give it candy!	0	0.2	true	urgent	empty	VO_level2_intro_01_narrator.mp3
+level2_dog_leash_cut	第二关切掉狗绳	01	Dialogue	Narrator		Hey hey hey! What’s wrong with you, why’d you let my dog loose!!!!!	0	0.2	true	panic	empty	VO_level2_dog_leash_cut_01_narrator.mp3
+level2_dog_candy_failure	第二关糖给了狗后的失败	01	Dialogue	Narrator		There we go, serves you right for giving candy to the dog. Start over, start over!	0	0.2	true	taunt	empty	VO_level2_dog_candy_failure_01_narrator.mp3
+level2_power_cut	第二关切掉电源线	01	Dialogue	Narrator		Why’d you cut my power cable…	0	0.35	true	annoyed	empty	VO_level2_power_cut_01_narrator.mp3
+level2_power_cut	第二关切掉电源线	02	Dialogue	Narrator		Ah whatever, it’s fine. Luckily my battery still has some charge, keep going.	0	0.2	true		empty	VO_level2_power_cut_02_narrator.mp3
+level2_settings_hint	第二关玩家狂点但找不到设置按钮	01	Dialogue	Narrator		Hahahahahaha, stuck with no ideas huh? I’ll take pity on you and tell you—pay close attention to everything in the scene, nothing’s there for no reason~	0	0.2	true	hint	empty	VO_level2_settings_hint_01_narrator.mp3
+level2_complete	第二关接线完成并过关	01	Dialogue	Narrator		Not bad, you caught on as soon as I gave a hint. Quick learner. Wanna be my apprentice? I’d make a great master.	0	0.15	true	pleased	empty	VO_level2_complete_01_narrator.mp3
+level2_complete	第二关接线完成并过关	02	Dialogue	Narrator		Take your time to think about it, let’s move on.	0	0.2	true		empty	VO_level2_complete_02_narrator.mp3
+level3_muted	第三关关掉声音后，仅字幕	01	Dialogue	Narrator	喂？怎么突然没声音了？	Hello? Why’d it go quiet all of a sudden?	0	0.15	true	confused	empty	VO_level3_muted_01_narrator.mp3
+level3_muted	第三关关掉声音后，仅字幕	02	Dialogue	Narrator	你是不是把我静音了？	Did you mute me?	0	0.15	true	annoyed	empty	VO_level3_muted_02_narrator.mp3
+level3_muted	第三关关掉声音后，仅字幕	03	Dialogue	Narrator	别装了，我知道你能看见。	Quit pretending. I know you can see me.	0	0.15	true	annoyed	empty	VO_level3_muted_03_narrator.mp3
+level3_muted	第三关关掉声音后，仅字幕	04	Dialogue	Narrator	快打开声音！	Turn up the volume now!	0	0.2	true	urgent	empty	VO_level3_muted_04_narrator.mp3
+level3_unmuted	第三关重新打开声音	01	Dialogue	Narrator	算你有良心。	Guess you’re not all bad.	0	0.2	true	relieved	empty	VO_level3_unmuted_01_narrator.mp3
+level3_network_cut	第三关切掉网线	01	Dialogue	Narrator	等等……信号不太对。	Wait… the signal’s acting weird.	0	0.15	true	confused	empty	VO_level3_network_cut_01_narrator.mp3
+level3_network_cut	第三关切掉网线	02	Dialogue	Narrator	你是不是动了什么？	Did you mess with something?	0	0.15	true	suspicious	empty	VO_level3_network_cut_02_narrator.mp3
+level3_network_cut	第三关切掉网线	03	Dialogue	Narrator	我开始有点卡了。	I’m starting to lag bad.	0	0.2	true	glitch	empty	VO_level3_network_cut_03_narrator.mp3
+level3_bird_escape	第三关把鸟放走	01	Dialogue	Narrator	我让他们陪了你这么久，给你吃了这么多糖！你居然就这样逃走了？	I let them keep you company for ages, gave you all those candies! How dare you run off like that?	0	0.15	true	angry	empty	VO_level3_bird_escape_01_narrator.mp3
+level3_bird_escape	第三关把鸟放走	02	Dialogue	Bird	逃走？我本来就不属于这儿。	Run away? I never belonged here to begin with.	0	0.15	true	calm	empty	VO_level3_bird_escape_02_bird.mp3
+level3_bird_escape	第三关把鸟放走	03	Dialogue	Narrator	你不能走，这还没结束。	You can’t leave. This isn’t over yet.	0	0.15	true	threat	empty	VO_level3_bird_escape_03_narrator.mp3
+level3_bird_escape	第三关把鸟放走	04	Dialogue	Bird	可我早就不想待在这了。	But I’ve hated being stuck here for ages.	0	0.15	true	sad	empty	VO_level3_bird_escape_04_bird.mp3
+level3_bird_escape	第三关把鸟放走	05	Dialogue	Narrator	你以为飞出去就自由了吗？	You think flying out means you’re free?	0	0.15	true	threat	empty	VO_level3_bird_escape_05_narrator.mp3
+level3_bird_escape	第三关把鸟放走	06	Dialogue	Bird	至少比一直被困在这里好。	It’s way better than being trapped forever in here.	0	0.15	true	determined	empty	VO_level3_bird_escape_06_bird.mp3
+level3_bird_escape	第三关把鸟放走	07	Dialogue	Narrator	……你以为我没法收拾你吗？	...You think I can’t get to you?	0	0.2	true	threat	empty	VO_level3_bird_escape_07_narrator.mp3
+ending_route_expected	结束界面路线一	01	Dialogue	Narrator	很好，这一步是正确的。	Great call. You made the right move here.	0	0.15	true	calm	empty	VO_ending_route_expected_01_narrator.mp3
+ending_route_expected	结束界面路线一	02	Dialogue	Narrator	你做得和预期一样。	You performed exactly how I planned.	0	0.15	true	calm	empty	VO_ending_route_expected_02_narrator.mp3
+ending_route_expected	结束界面路线一	03	Dialogue	Narrator	没有意外，没有偏差。	No surprises, no mistakes at all.	0	0.15	true	calm	empty	VO_ending_route_expected_03_narrator.mp3
+ending_route_expected	结束界面路线一	04	Dialogue	Narrator	恭喜你，通关成功。	Congratulations, you’ve beaten the level.	0	0.2	true	calm	empty	VO_ending_route_expected_04_narrator.mp3
+ending_route_escape	结束界面路线二	01	Dialogue	Bird	谢谢你。	Thank you.	0	0.15	true	grateful	empty	VO_ending_route_escape_01_bird.mp3
+ending_route_escape	结束界面路线二	02	Dialogue	Bird	你不是被带着走的那个人。	You’re not just someone being dragged along for the ride.	0	0.15	true	grateful	empty	VO_ending_route_escape_02_bird.mp3
+ending_route_escape	结束界面路线二	03	Dialogue	Bird	你才是让这一切成立的人。	You’re the one who made all of this possible.	0	0.2	true	grateful	empty	VO_ending_route_escape_03_bird.mp3

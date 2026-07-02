@@ -739,8 +739,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _anchorPoint: {fileID: 142526027}
-  _anchorPoints:
-  - {fileID: 142526027}
   _connectable: {fileID: 1865679799}
   _nodeCount: 15
   _nodeMass: 0.05
@@ -1390,8 +1388,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _anchorPoint: {fileID: 2096367540}
-  _anchorPoints:
-  - {fileID: 2096367540}
   _connectable: {fileID: 1865679799}
   _nodeCount: 15
   _nodeMass: 0.05
@@ -1890,8 +1886,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _anchorPoint: {fileID: 142526027}
-  _anchorPoints:
-  - {fileID: 142526027}
   _connectable: {fileID: 1198370739}
   _nodeCount: 15
   _nodeMass: 0.05
@@ -3233,8 +3227,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _anchorPoint: {fileID: 25647320}
-  _anchorPoints:
-  - {fileID: 25647320}
   _connectable: {fileID: 1865679799}
   _nodeCount: 15
   _nodeMass: 0.05

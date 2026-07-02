@@ -14,10 +14,23 @@ namespace Gameplay.Rope
     [RequireComponent(typeof(LineRenderer))]
     public class RopeController : MonoBehaviour
     {
-        [SerializeField] private Transform _anchorPoint;
-        [SerializeField] private Transform[] _anchorPoints;
+        public enum RopeConnectionMode
+        {
+            AnchorToConnectable,
+            AnchorToAnchor
+        }
+
+        [SerializeField] private RopeConnectionMode _connectionMode = RopeConnectionMode.AnchorToConnectable;
+
+        [FormerlySerializedAs("_anchorPoint")]
+        [SerializeField] private Transform _startAnchorPoint;
+
+        [SerializeField] private Transform _endAnchorPoint;
+
         [FormerlySerializedAs("_candy")]
         [SerializeField] private RopeConnectable _connectable;
+        [FormerlySerializedAs("_connectedEnd")]
+        [SerializeField, HideInInspector] private Rigidbody2D _legacyConnectedEndRigidbody;
 
         [SerializeField] private int _nodeCount = 15;
         [SerializeField] private float _nodeMass = 0.05f;
@@ -31,12 +44,14 @@ namespace Gameplay.Rope
 
         private class RopeChain
         {
-            public Transform AnchorPoint;
+            public Transform StartAnchorPoint;
+            public Transform EndAnchorPoint;
+            public bool ConnectsToConnectable;
             public Vector2 ConnectableLocalAttachPoint;
             public LineRenderer LineRenderer;
             public Gradient OriginalGradient;
-            public DistanceJoint2D AnchorJoint;
-            public DistanceJoint2D ConnectableJoint;
+            public DistanceJoint2D StartAnchorJoint;
+            public DistanceJoint2D EndJoint;
             public bool UsesWorldConnectableAnchor;
             public readonly List<GameObject> Nodes = new List<GameObject>();
             public bool IsCut;
@@ -47,6 +62,7 @@ namespace Gameplay.Rope
 
         private void Awake()
         {
+            ApplyLegacyEndpointFallback();
             _lineRenderer = GetComponent<LineRenderer>();
         }
 
@@ -56,57 +72,61 @@ namespace Gameplay.Rope
         }
 
         /// <summary>
-        /// 创建物理节点链：每个锚点 → 节点[0..N-1] → 同一个可连接物
+        /// 创建物理节点链：AnchorToConnectable 为锚点 → 节点 → 可连接物；
+        /// AnchorToAnchor 为起始锚点 → 节点 → 结束锚点。
         /// </summary>
         private void CreateRopeChains()
         {
-            if (_nodeCount <= 0 || _connectable == null) return;
+            if (_nodeCount <= 0) return;
 
-            List<Transform> anchors = GetAnchorPoints();
-            if (anchors.Count == 0) return;
-
-            _connectable.ReleaseInitialConnection();
-            Rigidbody2D connectableRb = _connectable.Rigidbody;
-
-            for (int i = 0; i < anchors.Count; i++)
+            RopeConnectionMode mode = ResolveConnectionMode();
+            if (mode == RopeConnectionMode.AnchorToConnectable)
             {
-                RopeChain chain = new RopeChain
-                {
-                    AnchorPoint = anchors[i],
-                    ConnectableLocalAttachPoint = _connectable.GetLocalAttachPoint(anchors[i].position),
-                    LineRenderer = CreateLineRenderer(i)
-                };
-
-                CreateRopeChain(chain, connectableRb, i);
-                SetupLineRenderer(chain.LineRenderer);
-                chain.OriginalGradient = RopeLineFade.CloneGradient(chain.LineRenderer.colorGradient);
-                _chains.Add(chain);
-                _connectable.RegisterRope();
+                CreateAnchorToConnectableChain();
+                return;
             }
+
+            CreateAnchorToAnchorChain();
         }
 
-        private List<Transform> GetAnchorPoints()
+        private void CreateAnchorToConnectableChain()
         {
-            List<Transform> anchors = new List<Transform>();
+            if (_startAnchorPoint == null || _connectable == null) return;
 
-            if (_anchorPoint != null)
+            _connectable.ReleaseInitialConnection();
+            RopeChain chain = new RopeChain
             {
-                anchors.Add(_anchorPoint);
-            }
+                StartAnchorPoint = _startAnchorPoint,
+                ConnectsToConnectable = true,
+                ConnectableLocalAttachPoint = _connectable.GetLocalAttachPoint(_startAnchorPoint.position),
+                LineRenderer = CreateLineRenderer(0)
+            };
 
-            if (_anchorPoints != null)
+            CreateRopeChain(chain, _connectable.Rigidbody, null, 0);
+            SetupLineRenderer(chain.LineRenderer);
+            chain.OriginalGradient = RopeLineFade.CloneGradient(chain.LineRenderer.colorGradient);
+            _chains.Add(chain);
+            _connectable.RegisterRope();
+        }
+
+        private void CreateAnchorToAnchorChain()
+        {
+            if (_startAnchorPoint == null || _endAnchorPoint == null || _startAnchorPoint == _endAnchorPoint)
+                return;
+
+            RopeChain chain = new RopeChain
             {
-                for (int i = 0; i < _anchorPoints.Length; i++)
-                {
-                    Transform anchor = _anchorPoints[i];
-                    if (anchor != null && !anchors.Contains(anchor))
-                    {
-                        anchors.Add(anchor);
-                    }
-                }
-            }
+                StartAnchorPoint = _startAnchorPoint,
+                EndAnchorPoint = _endAnchorPoint,
+                ConnectsToConnectable = false,
+                LineRenderer = CreateLineRenderer(0)
+            };
 
-            return anchors;
+            Rigidbody2D endAnchorRb = EnsureKinematicBody(_endAnchorPoint);
+            CreateRopeChain(chain, null, endAnchorRb, 0);
+            SetupLineRenderer(chain.LineRenderer);
+            chain.OriginalGradient = RopeLineFade.CloneGradient(chain.LineRenderer.colorGradient);
+            _chains.Add(chain);
         }
 
         private LineRenderer CreateLineRenderer(int chainIndex)
@@ -135,25 +155,19 @@ namespace Gameplay.Rope
             target.useWorldSpace = source.useWorldSpace;
         }
 
-        private void CreateRopeChain(RopeChain chain, Rigidbody2D connectableRb, int chainIndex)
+        private void CreateRopeChain(RopeChain chain, Rigidbody2D connectableRb, Rigidbody2D endAnchorRb, int chainIndex)
         {
-            // 确保锚点有 Kinematic Rigidbody2D（关节需要）
-            Rigidbody2D anchorRb = chain.AnchorPoint.GetComponent<Rigidbody2D>();
-            if (anchorRb == null)
-            {
-                anchorRb = chain.AnchorPoint.gameObject.AddComponent<Rigidbody2D>();
-            }
-            anchorRb.bodyType = RigidbodyType2D.Kinematic;
+            EnsureKinematicBody(chain.StartAnchorPoint);
 
-            Vector2 anchorPos = chain.AnchorPoint.position;
-            Vector2 connectablePos = GetConnectableAttachWorldPoint(chain);
-            float segmentDistance = Vector2.Distance(anchorPos, connectablePos) / (_nodeCount + 1);
+            Vector2 anchorPos = chain.StartAnchorPoint.position;
+            Vector2 endPos = GetEndAttachWorldPoint(chain);
+            float segmentDistance = Vector2.Distance(anchorPos, endPos) / (_nodeCount + 1);
 
             // 创建所有节点（物理组件 + 碰撞体，不含 SpriteRenderer）
             for (int i = 0; i < _nodeCount; i++)
             {
                 float t = (i + 1) / (float)(_nodeCount + 1);
-                Vector2 pos = Vector2.Lerp(anchorPos, connectablePos, t);
+                Vector2 pos = Vector2.Lerp(anchorPos, endPos, t);
 
                 GameObject node = new GameObject("RopeNode_" + chainIndex + "_" + i);
                 node.transform.position = pos;
@@ -180,11 +194,11 @@ namespace Gameplay.Rope
             }
 
             // 设置关节连接
-            DistanceJoint2D anchorJoint = chain.AnchorPoint.gameObject.AddComponent<DistanceJoint2D>();
+            DistanceJoint2D anchorJoint = chain.StartAnchorPoint.gameObject.AddComponent<DistanceJoint2D>();
             anchorJoint.connectedBody = chain.Nodes[0].GetComponent<Rigidbody2D>();
             anchorJoint.autoConfigureDistance = false;
             anchorJoint.distance = segmentDistance;
-            chain.AnchorJoint = anchorJoint;
+            chain.StartAnchorJoint = anchorJoint;
 
             for (int i = 0; i < _nodeCount; i++)
             {
@@ -196,20 +210,28 @@ namespace Gameplay.Rope
                 }
                 else
                 {
-                    if (connectableRb != null)
+                    if (chain.ConnectsToConnectable)
                     {
-                        joint.connectedBody = connectableRb;
-                        joint.connectedAnchor = chain.ConnectableLocalAttachPoint;
+                        if (connectableRb != null)
+                        {
+                            joint.connectedBody = connectableRb;
+                            joint.connectedAnchor = chain.ConnectableLocalAttachPoint;
+                        }
+                        else
+                        {
+                            joint.connectedBody = null;
+                            joint.connectedAnchor = GetEndAttachWorldPoint(chain);
+                            chain.UsesWorldConnectableAnchor = true;
+                        }
                     }
                     else
                     {
-                        joint.connectedBody = null;
-                        joint.connectedAnchor = GetConnectableAttachWorldPoint(chain);
-                        chain.UsesWorldConnectableAnchor = true;
+                        joint.connectedBody = endAnchorRb;
+                        joint.connectedAnchor = Vector2.zero;
                     }
 
                     joint.autoConfigureConnectedAnchor = false;
-                    chain.ConnectableJoint = joint;
+                    chain.EndJoint = joint;
                 }
 
                 joint.autoConfigureDistance = false;
@@ -233,8 +255,7 @@ namespace Gameplay.Rope
         {
             if (_chains.Count == 0) return;
 
-            // 可连接物被销毁时清理整条绳子
-            if (_connectable == null)
+            if (ShouldDestroyBecauseEndpointMissing())
             {
                 Destroy(gameObject);
                 return;
@@ -274,10 +295,10 @@ namespace Gameplay.Rope
 
         private void UpdateWorldConnectableJoint(RopeChain chain)
         {
-            if (!chain.UsesWorldConnectableAnchor || chain.IsCut || chain.ConnectableJoint == null)
+            if (!chain.ConnectsToConnectable || !chain.UsesWorldConnectableAnchor || chain.IsCut || chain.EndJoint == null)
                 return;
 
-            chain.ConnectableJoint.connectedAnchor = GetConnectableAttachWorldPoint(chain);
+            chain.EndJoint.connectedAnchor = GetEndAttachWorldPoint(chain);
         }
 
         /// <summary>
@@ -291,27 +312,32 @@ namespace Gameplay.Rope
             return GetRopePositions(_chains[0], !_chains[0].IsCut);
         }
 
-        private Vector3[] GetRopePositions(RopeChain chain, bool includeConnectable)
+        private Vector3[] GetRopePositions(RopeChain chain, bool includeEndPoint)
         {
-            int pointCount = chain.Nodes.Count + 1 + (includeConnectable ? 1 : 0);
+            int pointCount = chain.Nodes.Count + 1 + (includeEndPoint ? 1 : 0);
             Vector3[] positions = new Vector3[pointCount];
 
-            positions[0] = chain.AnchorPoint.position;
+            positions[0] = chain.StartAnchorPoint.position;
             for (int i = 0; i < chain.Nodes.Count; i++)
                 positions[i + 1] = chain.Nodes[i].transform.position;
 
-            if (includeConnectable)
-                positions[pointCount - 1] = GetConnectableAttachWorldPoint(chain);
+            if (includeEndPoint)
+                positions[pointCount - 1] = GetEndAttachWorldPoint(chain);
 
             return positions;
         }
 
-        private Vector3 GetConnectableAttachWorldPoint(RopeChain chain)
+        private Vector3 GetEndAttachWorldPoint(RopeChain chain)
         {
-            if (_connectable == null)
-                return Vector3.zero;
+            if (chain.ConnectsToConnectable)
+            {
+                if (_connectable == null)
+                    return Vector3.zero;
 
-            return _connectable.GetWorldAttachPoint(chain.ConnectableLocalAttachPoint);
+                return _connectable.GetWorldAttachPoint(chain.ConnectableLocalAttachPoint);
+            }
+
+            return chain.EndAnchorPoint != null ? chain.EndAnchorPoint.position : Vector3.zero;
         }
 
         public bool TryCut(Vector2 lineStart, Vector2 lineEnd)
@@ -346,7 +372,7 @@ namespace Gameplay.Rope
             RopeChain chain = FindChain(anchorPoint);
             if (chain == null || chain.IsCut) return false;
 
-            CutChain(chain, anchorPoint.position, 0);
+            CutChain(chain, anchorPoint.position, GetDropSegmentIndex(chain, anchorPoint));
             return true;
         }
 
@@ -363,24 +389,27 @@ namespace Gameplay.Rope
 
         private void CutChain(RopeChain chain, Vector3 hitPoint, int segmentIndex)
         {
-            if (chain.IsCut || _connectable == null || chain.AnchorPoint == null) return;
+            if (chain.IsCut || chain.StartAnchorPoint == null) return;
+            if (chain.ConnectsToConnectable && _connectable == null) return;
 
             int nodeCount = chain.Nodes.Count;
             if (segmentIndex < 0 || segmentIndex > nodeCount) return;
 
             chain.IsCut = true;
 
-            // segmentIndex 0 是锚点到第一个节点；之后是节点之间；最后一段是末节点到可连接物。
+            // segmentIndex 0 是起始锚点到第一个节点；之后是节点之间；最后一段是末节点到末端对象。
             DistanceJoint2D jointToDestroy = segmentIndex == 0
-                ? chain.AnchorJoint
+                ? chain.StartAnchorJoint
                 : chain.Nodes[segmentIndex - 1].GetComponent<DistanceJoint2D>();
             if (jointToDestroy != null)
             {
                 Destroy(jointToDestroy);
             }
 
-            _connectable.NotifyRopeCut(hitPoint);
-            NotifyAnchorCut(chain, hitPoint);
+            if (chain.ConnectsToConnectable)
+                _connectable.NotifyRopeCut(hitPoint);
+
+            NotifyAnchorsCut(chain, hitPoint);
 
             // 下半段节点构建为 RopeSegment（含 LineRenderer）
             List<GameObject> lowerNodes = new List<GameObject>();
@@ -389,12 +418,12 @@ namespace Gameplay.Rope
                 lowerNodes.Add(chain.Nodes[i]);
             }
 
-            bool keepLowerSegmentConnectedToItem = _connectable.Rigidbody != null;
+            bool keepLowerSegmentConnectedToEnd = ShouldKeepLowerSegmentConnectedToEnd(chain);
 
-            if (!keepLowerSegmentConnectedToItem && chain.ConnectableJoint != null)
+            if (!keepLowerSegmentConnectedToEnd && chain.EndJoint != null)
             {
-                Destroy(chain.ConnectableJoint);
-                chain.ConnectableJoint = null;
+                Destroy(chain.EndJoint);
+                chain.EndJoint = null;
             }
 
             if (lowerNodes.Count > 0)
@@ -410,7 +439,7 @@ namespace Gameplay.Rope
                     chain.OriginalGradient,
                     _cutFadeDelay,
                     _cutFadeDuration,
-                    keepLowerSegmentConnectedToItem ? _connectable.transform : null,
+                    keepLowerSegmentConnectedToEnd ? GetEndTransform(chain) : null,
                     chain.ConnectableLocalAttachPoint);
 
                 // 从上半段列表中移除下半段节点
@@ -451,10 +480,10 @@ namespace Gameplay.Rope
             if (chain.LineRenderer != null)
                 chain.LineRenderer.enabled = false;
 
-            if (chain.AnchorJoint != null)
+            if (chain.StartAnchorJoint != null)
             {
-                Destroy(chain.AnchorJoint);
-                chain.AnchorJoint = null;
+                Destroy(chain.StartAnchorJoint);
+                chain.StartAnchorJoint = null;
             }
 
             for (int i = chain.Nodes.Count - 1; i >= 0; i--)
@@ -470,18 +499,36 @@ namespace Gameplay.Rope
         {
             for (int i = 0; i < _chains.Count; i++)
             {
-                if (_chains[i].AnchorPoint == anchorPoint)
+                if (_chains[i].StartAnchorPoint == anchorPoint || _chains[i].EndAnchorPoint == anchorPoint)
                     return _chains[i];
             }
 
             return null;
         }
 
-        private void NotifyAnchorCut(RopeChain chain, Vector3 hitPoint)
+        private int GetDropSegmentIndex(RopeChain chain, Transform anchorPoint)
         {
-            RopeAnchor anchor = chain.AnchorPoint.GetComponent<RopeAnchor>();
+            if (chain.EndAnchorPoint == anchorPoint)
+                return chain.Nodes.Count;
+
+            return 0;
+        }
+
+        private void NotifyAnchorsCut(RopeChain chain, Vector3 hitPoint)
+        {
+            NotifyAnchorCut(chain.StartAnchorPoint, hitPoint);
+
+            if (!chain.ConnectsToConnectable && chain.EndAnchorPoint != chain.StartAnchorPoint)
+                NotifyAnchorCut(chain.EndAnchorPoint, hitPoint);
+        }
+
+        private void NotifyAnchorCut(Transform anchorPoint, Vector3 hitPoint)
+        {
+            if (anchorPoint == null) return;
+
+            RopeAnchor anchor = anchorPoint.GetComponent<RopeAnchor>();
             if (anchor != null)
-                anchor.OnRopeCut(this, chain.AnchorPoint, hitPoint);
+                anchor.OnRopeCut(this, anchorPoint, hitPoint);
         }
 
         private Vector2 GetIntersectionPoint(Vector2 a1, Vector2 a2, Vector2 b1, Vector2 b2)
@@ -514,9 +561,9 @@ namespace Gameplay.Rope
             for (int chainIndex = _chains.Count - 1; chainIndex >= 0; chainIndex--)
             {
                 RopeChain chain = _chains[chainIndex];
-                if (chain.AnchorJoint != null)
+                if (chain.StartAnchorJoint != null)
                 {
-                    Destroy(chain.AnchorJoint);
+                    Destroy(chain.StartAnchorJoint);
                 }
 
                 for (int i = chain.Nodes.Count - 1; i >= 0; i--)
@@ -547,6 +594,71 @@ namespace Gameplay.Rope
 
         public RopeConnectable ConnectedItem => _connectable;
         public Candy ConnectedCandy => _connectable as Candy;
-        public Transform AnchorPoint => _anchorPoint;
+        public RopeConnectionMode ConnectionMode => ResolveConnectionMode();
+        public Transform AnchorPoint => _startAnchorPoint;
+        public Transform StartAnchorPoint => _startAnchorPoint;
+        public Transform EndAnchorPoint => _endAnchorPoint;
+
+        private RopeConnectionMode ResolveConnectionMode()
+        {
+            if (_connectionMode == RopeConnectionMode.AnchorToConnectable && _connectable == null && _endAnchorPoint != null)
+                return RopeConnectionMode.AnchorToAnchor;
+
+            return _connectionMode;
+        }
+
+        private bool ShouldDestroyBecauseEndpointMissing()
+        {
+            for (int i = 0; i < _chains.Count; i++)
+            {
+                RopeChain chain = _chains[i];
+                if (chain.StartAnchorPoint == null)
+                    return true;
+                if (chain.ConnectsToConnectable && _connectable == null)
+                    return true;
+                if (!chain.ConnectsToConnectable && chain.EndAnchorPoint == null)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private Rigidbody2D EnsureKinematicBody(Transform anchorPoint)
+        {
+            if (anchorPoint == null) return null;
+
+            Rigidbody2D anchorRb = anchorPoint.GetComponent<Rigidbody2D>();
+            if (anchorRb == null)
+            {
+                anchorRb = anchorPoint.gameObject.AddComponent<Rigidbody2D>();
+            }
+
+            anchorRb.bodyType = RigidbodyType2D.Kinematic;
+            return anchorRb;
+        }
+
+        private bool ShouldKeepLowerSegmentConnectedToEnd(RopeChain chain)
+        {
+            if (!chain.ConnectsToConnectable)
+                return chain.EndAnchorPoint != null;
+
+            return _connectable != null && _connectable.Rigidbody != null;
+        }
+
+        private Transform GetEndTransform(RopeChain chain)
+        {
+            return chain.ConnectsToConnectable
+                ? (_connectable != null ? _connectable.transform : null)
+                : chain.EndAnchorPoint;
+        }
+
+        private void ApplyLegacyEndpointFallback()
+        {
+            if (_connectable == null && _legacyConnectedEndRigidbody != null)
+                _connectable = _legacyConnectedEndRigidbody.GetComponent<RopeConnectable>();
+
+            if (_endAnchorPoint == null && _legacyConnectedEndRigidbody != null)
+                _endAnchorPoint = _legacyConnectedEndRigidbody.transform;
+        }
     }
 }

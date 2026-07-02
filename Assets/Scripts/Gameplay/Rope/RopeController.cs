@@ -15,6 +15,7 @@ namespace Gameplay.Rope
     {
         [SerializeField] private Transform _anchorPoint;
         [SerializeField] private Candy _candy;
+        [SerializeField] private Rigidbody2D _connectedEnd;
 
         [SerializeField] private int _nodeCount = 15;
         [SerializeField] private float _nodeMass = 0.05f;
@@ -25,6 +26,8 @@ namespace Gameplay.Rope
         private LineRenderer _lineRenderer;
         private List<GameObject> _nodes;
         private bool _isCut;
+        private Rigidbody2D _endRb;
+        private Transform _endTransform;
 
         private void Awake()
         {
@@ -33,8 +36,19 @@ namespace Gameplay.Rope
 
         private void Start()
         {
+            if (_connectedEnd != null)
+            {
+                _endRb = _connectedEnd;
+                _endTransform = _connectedEnd.transform;
+            }
+            else
+            {
+                _endRb = _candy.GetComponent<Rigidbody2D>();
+                _endTransform = _candy.transform;
+                _candy.Release();
+            }
+
             CreateRopeChain();
-            _candy.Release();
             SetupLineRenderer();
         }
 
@@ -56,14 +70,13 @@ namespace Gameplay.Rope
             anchorRb.bodyType = RigidbodyType2D.Kinematic;
 
             Vector2 anchorPos = _anchorPoint.position;
-            Vector2 candyPos = _candy.transform.position;
-            Rigidbody2D candyRb = _candy.GetComponent<Rigidbody2D>();
+            Vector2 endPos = _endTransform.position;
 
             // 创建所有节点（物理组件 + 碰撞体，不含 SpriteRenderer）
             for (int i = 0; i < _nodeCount; i++)
             {
                 float t = (i + 1) / (float)(_nodeCount + 1);
-                Vector2 pos = Vector2.Lerp(anchorPos, candyPos, t);
+                Vector2 pos = Vector2.Lerp(anchorPos, endPos, t);
                 float sag = Mathf.Sin(t * Mathf.PI) * _sagFactor;
                 pos += Vector2.down * sag;
 
@@ -107,7 +120,7 @@ namespace Gameplay.Rope
                 }
                 else
                 {
-                    joint.connectedBody = candyRb;
+                    joint.connectedBody = _endRb;
                 }
             }
         }
@@ -128,8 +141,15 @@ namespace Gameplay.Rope
         {
             if (_nodes == null || _nodes.Count == 0) return;
 
-            // 未切割：锚点 → 节点链 → 糖果
-            // 已切割：锚点 → 上半段节点链（糖果由 RopeSegment 渲染）
+            // 糖果被销毁时清理整条绳子
+            if (!_isCut && _endTransform == null)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            // 未切割：锚点 → 节点链 → 末端物体
+            // 已切割：锚点 → 上半段节点链（下半段由 RopeSegment 渲染）
             int nodeCount = _nodes.Count;
             int extraPoints = _isCut ? 1 : 2;
             int pointCount = nodeCount + extraPoints;
@@ -142,7 +162,7 @@ namespace Gameplay.Rope
                 _lineRenderer.SetPosition(i + 1, _nodes[i].transform.position);
 
             if (!_isCut)
-                _lineRenderer.SetPosition(pointCount - 1, _candy.transform.position);
+                _lineRenderer.SetPosition(pointCount - 1, _endTransform.position);
         }
 
         /// <summary>
@@ -164,7 +184,7 @@ namespace Gameplay.Rope
         /// <param name="segmentIndex">切割命中的线段索引（Node[i] 与 Node[i+1] 之间的线段）</param>
         public void Cut(Vector3 hitPoint, int segmentIndex)
         {
-            if (_isCut || _candy == null || _anchorPoint == null) return;
+            if (_isCut || _endTransform == null || _anchorPoint == null) return;
             if (segmentIndex < 0 || segmentIndex >= _nodes.Count - 1) return;
 
             _isCut = true;
@@ -188,7 +208,7 @@ namespace Gameplay.Rope
             lowerGO.transform.SetParent(transform);
 
             RopeSegment lowerSegment = lowerGO.AddComponent<RopeSegment>();
-            lowerSegment.Initialize(lowerNodes, _ropeWidth, _lineRenderer.material, _candy.transform);
+            lowerSegment.Initialize(lowerNodes, _ropeWidth, _lineRenderer.material, _endTransform);
 
             // 从上半段列表中移除下半段节点
             _nodes.RemoveRange(segmentIndex + 1, lowerCount);

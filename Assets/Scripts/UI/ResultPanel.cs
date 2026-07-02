@@ -12,6 +12,7 @@ namespace UI
         [SerializeField] private TextMeshProUGUI _resultText;
         [SerializeField] private Button _restartButton;
         [SerializeField] private string _victoryMessage = "胜利！";
+        [SerializeField] private string _defeatMessage = "失败！";
 
         private void Awake()
         {
@@ -38,6 +39,18 @@ namespace UI
             if (_resultText != null)
             {
                 _resultText.text = _victoryMessage;
+            }
+        }
+
+        /// <summary>
+        /// 显示失败结果
+        /// </summary>
+        public void ShowDefeat()
+        {
+            gameObject.SetActive(true);
+            if (_resultText != null)
+            {
+                _resultText.text = _defeatMessage;
             }
         }
 

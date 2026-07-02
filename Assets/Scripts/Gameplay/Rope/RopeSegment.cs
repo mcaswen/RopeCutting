@@ -13,6 +13,7 @@ namespace Gameplay.Rope
         private LineRenderer _lineRenderer;
         private List<GameObject> _nodes;
         private Transform _candyTransform;
+        private bool _hasCandy;
 
         private void Awake()
         {
@@ -26,6 +27,7 @@ namespace Gameplay.Rope
         {
             _nodes = lowerNodes;
             _candyTransform = candyTransform;
+            _hasCandy = candyTransform != null;
 
             for (int i = 0; i < _nodes.Count; i++)
             {
@@ -60,6 +62,13 @@ namespace Gameplay.Rope
             }
 
             if (!anyAlive)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            // 糖果被销毁时自清理
+            if (_hasCandy && _candyTransform == null)
             {
                 Destroy(gameObject);
                 return;

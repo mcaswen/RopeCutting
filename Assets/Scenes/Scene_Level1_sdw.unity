@@ -1155,6 +1155,7 @@ MonoBehaviour:
   _restartButton: {fileID: 533968262}
   _failureMessage: Failed
   _victoryMessage: Win!!
+  _defeatMessage: "\u5931\u8D25\uFF01"
 --- !u!1 &762860251
 GameObject:
   m_ObjectHideFlags: 0
@@ -2792,13 +2793,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1932698843}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: -1.8, y: 0.07000017, z: -0.03769819}
   m_LocalScale: {x: 0.3, y: 0.3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 82723057}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!212 &1932698845
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2872,7 +2873,7 @@ MonoBehaviour:
   _dragMin: {x: -5, y: -5}
   _dragMax: {x: 5, y: 5}
   _moveRigidbody: 1
-  _rotationStep: 90
+  _rotationStep: -90
   _rotationDuration: 0.15
   _clickMaxScreenDistance: 12
   _onPressed:

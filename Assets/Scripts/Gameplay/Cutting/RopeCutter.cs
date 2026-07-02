@@ -10,7 +10,8 @@ namespace Gameplay.Cutting
     public class RopeCutter : MonoBehaviour
     {
         [SerializeField] private Camera _mainCamera;
-        [SerializeField] private RopeController[] _ropes;
+
+        private RopeController[] _ropes;
 
         private Vector2 _lastMousePosition;
         private bool _isDragging;
@@ -102,6 +103,9 @@ namespace Gameplay.Cutting
         /// </summary>
         private void CheckRopeCut(Vector2 lineStart, Vector2 lineEnd)
         {
+            if (_ropes == null || _ropes.Length == 0)
+                FindRopesInScene();
+
             foreach (RopeController rope in _ropes)
             {
                 if (rope == null || rope.IsCut) continue;
@@ -118,7 +122,11 @@ namespace Gameplay.Cutting
         /// </summary>
         public void FindRopesInScene()
         {
+#if UNITY_2022_2_OR_NEWER
+            _ropes = FindObjectsByType<RopeController>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+#else
             _ropes = FindObjectsOfType<RopeController>();
+#endif
         }
     }
 }

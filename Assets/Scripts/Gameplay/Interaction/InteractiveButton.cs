@@ -312,5 +312,13 @@ namespace Gameplay.Interaction
         public UnityEvent OnDragEnded => _onDragEnded;
         public UnityEvent OnRotated => _onRotated;
         public UnityEvent OnReleased => _onReleased;
+
+        public Transform Target => _target != null ? _target : transform;
+        public float CurrentLocalZAngle => Mathf.Repeat(Target.localEulerAngles.z, 360f);
+
+        public bool IsAtLocalZAngle(float angle, float tolerance = 1f)
+        {
+            return Mathf.Abs(Mathf.DeltaAngle(CurrentLocalZAngle, angle)) <= tolerance;
+        }
     }
 }

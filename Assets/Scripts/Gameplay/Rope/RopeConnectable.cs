@@ -13,6 +13,9 @@ namespace Gameplay.Rope
         private DistanceJoint2D[] _initialJoints;
         private int _activeRopeCount;
 
+        public event System.Action<Vector3, int> RopeCut;
+        public event System.Action<Vector3> AllRopesCut;
+
         public virtual Rigidbody2D Rigidbody => null;
         public int ActiveRopeCount => _activeRopeCount;
 
@@ -61,9 +64,13 @@ namespace Gameplay.Rope
         {
             _activeRopeCount = Mathf.Max(0, _activeRopeCount - 1);
             OnRopeCut(hitPoint, _activeRopeCount);
+            RopeCut?.Invoke(hitPoint, _activeRopeCount);
 
             if (_activeRopeCount == 0)
+            {
                 OnAllRopesCut(hitPoint);
+                AllRopesCut?.Invoke(hitPoint);
+            }
         }
 
         protected virtual void OnRopeCut(Vector3 hitPoint, int remainingRopeCount)

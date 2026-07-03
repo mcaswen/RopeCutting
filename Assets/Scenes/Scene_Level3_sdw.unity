@@ -966,6 +966,9 @@ MonoBehaviour:
   _onFlyStarted:
     m_PersistentCalls:
       m_Calls: []
+  _onDisappearing:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &642796133 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6637661977662579194, guid: e8397cdc06b08a64980157da3fb06c59, type: 3}
@@ -1018,13 +1021,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 649847910}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 1.0957, y: -6.9644, z: 0}
   m_LocalScale: {x: 3.2881057, y: 22.633764, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 774059133}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
 --- !u!114 &649847912
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2795,11 +2798,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 100001, guid: 9c0b3f244c614c2a80b8420fcfb7268e, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 182
+      value: 148
       objectReference: {fileID: 0}
     - target: {fileID: 100001, guid: 9c0b3f244c614c2a80b8420fcfb7268e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 460
+      value: 461
       objectReference: {fileID: 0}
     - target: {fileID: 100001, guid: 9c0b3f244c614c2a80b8420fcfb7268e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

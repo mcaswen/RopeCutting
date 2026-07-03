@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Gameplay.Rope;
 using UI;
 using UnityEngine;
@@ -59,12 +60,8 @@ namespace Systems.Dialogue
         [SerializeField, Min(0f)] private float _noVoiceVisibleSeconds = 1.2f;
 
         [Header("Rope")]
-        [SerializeField] private bool _indestructibleRopes = true;
-        [SerializeField] private bool _disableRopeNodeColliders = true;
+        [SerializeField, Min(0f)] private float _runtimeRopeWidth = 0.08f;
         [SerializeField] private int _runtimeRopeSortingOrder = 6;
-
-        [Header("Lifetime")]
-        [SerializeField] private bool _destroySubtitleAfterLine = true;
 
         [Header("Events")]
         [SerializeField] private UnityEvent<string> _onSequenceStarted;
@@ -75,7 +72,8 @@ namespace Systems.Dialogue
 
         private Coroutine _sequenceRoutine;
         private Coroutine _settleRoutine;
-        private ActiveSubtitle _activeSubtitle;
+        private readonly List<ActiveSubtitle> _activeSubtitles = new List<ActiveSubtitle>();
+        private DialogueSequence _pendingSequence;
 
         [Serializable]
 #pragma warning disable 0649
@@ -91,6 +89,8 @@ namespace Systems.Dialogue
             public AdaptiveSubtitleBubble View;
             public RopeSubtitleBubble Connectable;
             public GameObject RopeRoot;
+            public LineRenderer RopeLine;
+            public Vector2 RopeAttachLocalPoint;
 
             public bool IsAlive => Connectable != null;
 
@@ -109,6 +109,11 @@ namespace Systems.Dialogue
         private void Awake()
         {
             ResolveAudioSource();
+        }
+
+        private void OnEnable()
+        {
+            PlayPendingSequenceIfReady();
         }
 
         private void Start()
@@ -149,6 +154,13 @@ namespace Systems.Dialogue
             if (sequence == null)
                 return;
 
+            if (!CanRunCoroutines)
+            {
+                _pendingSequence = sequence;
+                return;
+            }
+
+            _pendingSequence = null;
             StopSequence(false);
             _sequenceRoutine = StartCoroutine(SequenceRoutine(sequence));
         }
@@ -199,10 +211,11 @@ namespace Systems.Dialogue
                     continue;
                 }
 
-                DestroyActiveSubtitle();
                 ActiveSubtitle subtitle = SpawnSubtitle(text);
                 if (subtitle == null)
                     yield break;
+
+                _activeSubtitles.Add(subtitle);
 
                 Vector3 settlePosition = ResolveSettlePosition(subtitleIndex);
                 subtitleIndex++;
@@ -213,7 +226,8 @@ namespace Systems.Dialogue
                 if (!subtitle.IsAlive)
                     continue;
 
-                subtitle.RopeRoot = CreateRopeInstance(subtitle.Connectable);
+                subtitle.RopeRoot = CreateVisualRopeInstance(subtitle);
+                UpdateVisualRope(subtitle);
 
                 yield return WaitUntilSettlePoint(subtitle, settlePosition);
                 if (!subtitle.IsAlive)
@@ -227,9 +241,6 @@ namespace Systems.Dialogue
 
                 _onSubtitleSettled?.Invoke(text);
                 yield return WaitSeconds(GetLineInterval(line));
-
-                if (_destroySubtitleAfterLine)
-                    DestroyActiveSubtitle();
             }
 
             _sequenceRoutine = null;
@@ -306,6 +317,8 @@ namespace Systems.Dialogue
             float elapsed = 0f;
             while (subtitle.IsAlive && elapsed < _maxFallSeconds)
             {
+                UpdateVisualRope(subtitle);
+
                 float distance = Vector2.Distance(subtitle.Connectable.transform.position, settlePosition);
                 if (distance <= _settleStartDistance)
                     yield break;
@@ -342,11 +355,15 @@ namespace Systems.Dialogue
                 float t = Mathf.Clamp01(elapsed / _settleDuration);
                 float easedT = EaseOutBack(t, _settleBackOvershoot);
                 bubble.MoveTo(Vector3.LerpUnclamped(startPosition, settlePosition, easedT));
+                UpdateVisualRope(subtitle);
                 yield return null;
             }
 
             if (bubble != null)
+            {
                 bubble.FixAt(settlePosition, _freezeAtSettledPoint);
+                UpdateVisualRope(subtitle);
+            }
 
             if (_settleRoutine != null)
                 _settleRoutine = null;
@@ -374,7 +391,7 @@ namespace Systems.Dialogue
             }
         }
 
-        private GameObject CreateRopeInstance(RopeConnectable connectable)
+        private GameObject CreateVisualRopeInstance(ActiveSubtitle subtitle)
         {
             Vector3 anchorPosition = ResolvePoint(_connectAnchorPoint, _connectAnchorPosition);
             Quaternion anchorRotation = _connectAnchorPoint != null ? _connectAnchorPoint.rotation : Quaternion.identity;
@@ -386,41 +403,72 @@ namespace Systems.Dialogue
                 anchorRoot.transform.SetParent(_ropeParent, true);
 
             anchorRoot.transform.position = anchorPosition;
-            Rigidbody2D anchorBody = anchorRoot.GetComponent<Rigidbody2D>();
-            if (anchorBody == null)
-                anchorBody = anchorRoot.AddComponent<Rigidbody2D>();
+            DisableRuntimeRopePhysics(anchorRoot);
 
-            anchorBody.bodyType = RigidbodyType2D.Kinematic;
-            anchorBody.gravityScale = 0f;
-            anchorBody.velocity = Vector2.zero;
-            anchorBody.angularVelocity = 0f;
+            LineRenderer lineRenderer = anchorRoot.GetComponentInChildren<LineRenderer>(true);
+            if (lineRenderer == null)
+                lineRenderer = CreateRuntimeRopeLine(anchorRoot.transform);
 
-            RopeController rope = anchorRoot.GetComponentInChildren<RopeController>(true);
-            if (rope == null)
-                rope = CreateRuntimeRope(anchorRoot.transform);
+            ConfigureVisualRopeLine(lineRenderer);
 
-            rope.ConfigureAnchorToConnectable(anchorRoot.transform, connectable);
-            rope.SetProtection(_indestructibleRopes, _disableRopeNodeColliders);
+            subtitle.RopeLine = lineRenderer;
+            subtitle.RopeAttachLocalPoint = subtitle.Connectable.GetLocalAttachPoint(anchorPosition);
             return anchorRoot;
         }
 
-        private RopeController CreateRuntimeRope(Transform anchorTransform)
+        private LineRenderer CreateRuntimeRopeLine(Transform anchorTransform)
         {
             GameObject ropeObject = new GameObject("Rope");
             ropeObject.transform.SetParent(anchorTransform, false);
 
-            LineRenderer lineRenderer = ropeObject.AddComponent<LineRenderer>();
+            return ropeObject.AddComponent<LineRenderer>();
+        }
+
+        private void DisableRuntimeRopePhysics(GameObject ropeRoot)
+        {
+            if (ropeRoot == null)
+                return;
+
+            RopeController[] ropes = ropeRoot.GetComponentsInChildren<RopeController>(true);
+            for (int i = 0; i < ropes.Length; i++)
+                ropes[i].enabled = false;
+
+            Rigidbody2D[] bodies = ropeRoot.GetComponentsInChildren<Rigidbody2D>(true);
+            for (int i = 0; i < bodies.Length; i++)
+            {
+                bodies[i].bodyType = RigidbodyType2D.Kinematic;
+                bodies[i].gravityScale = 0f;
+                bodies[i].velocity = Vector2.zero;
+                bodies[i].angularVelocity = 0f;
+            }
+        }
+
+        private void ConfigureVisualRopeLine(LineRenderer lineRenderer)
+        {
+            if (lineRenderer == null)
+                return;
+
+            lineRenderer.enabled = true;
             lineRenderer.positionCount = 2;
             lineRenderer.useWorldSpace = true;
+            lineRenderer.widthMultiplier = Mathf.Max(0f, _runtimeRopeWidth);
+            lineRenderer.widthCurve = AnimationCurve.Linear(0f, 1f, 1f, 1f);
             lineRenderer.sortingOrder = _runtimeRopeSortingOrder;
+
             if (_runtimeRopeMaterial != null)
                 lineRenderer.sharedMaterial = _runtimeRopeMaterial;
+        }
 
-            Vector3 anchorPosition = anchorTransform.position;
-            lineRenderer.SetPosition(0, anchorPosition);
-            lineRenderer.SetPosition(1, anchorPosition);
+        private void UpdateVisualRope(ActiveSubtitle subtitle)
+        {
+            if (subtitle == null || subtitle.RopeLine == null || !subtitle.IsAlive)
+                return;
 
-            return ropeObject.AddComponent<RopeController>();
+            Vector3 anchorPosition = ResolvePoint(_connectAnchorPoint, _connectAnchorPosition);
+            Vector3 bubbleAttachPosition = subtitle.Connectable.GetWorldAttachPoint(subtitle.RopeAttachLocalPoint);
+
+            subtitle.RopeLine.SetPosition(0, anchorPosition);
+            subtitle.RopeLine.SetPosition(1, bubbleAttachPosition);
         }
 
         private bool PlayVoice(AudioClip voiceClip)
@@ -459,6 +507,8 @@ namespace Systems.Dialogue
 
         private void StopSequence(bool invokeEvent)
         {
+            _pendingSequence = null;
+
             if (_sequenceRoutine != null)
             {
                 StopCoroutine(_sequenceRoutine);
@@ -474,25 +524,31 @@ namespace Systems.Dialogue
             if (_audioSource != null)
                 _audioSource.Stop();
 
-            DestroyActiveSubtitle();
+            DestroyActiveSubtitles();
 
             if (invokeEvent)
                 _onPlaybackStopped?.Invoke();
         }
 
-        private void DestroyActiveSubtitle()
+        private void DestroyActiveSubtitles()
         {
-            if (_activeSubtitle == null)
+            for (int i = _activeSubtitles.Count - 1; i >= 0; i--)
+                DestroySubtitle(_activeSubtitles[i]);
+
+            _activeSubtitles.Clear();
+        }
+
+        private void DestroySubtitle(ActiveSubtitle subtitle)
+        {
+            if (subtitle == null)
                 return;
 
-            if (_activeSubtitle.RopeRoot != null)
-                Destroy(_activeSubtitle.RopeRoot);
+            if (subtitle.RopeRoot != null)
+                Destroy(subtitle.RopeRoot);
 
-            GameObject bubbleRoot = _activeSubtitle.BubbleRoot;
+            GameObject bubbleRoot = subtitle.BubbleRoot;
             if (bubbleRoot != null)
                 Destroy(bubbleRoot);
-
-            _activeSubtitle = null;
         }
 
         private void ResolveAudioSource()
@@ -515,6 +571,18 @@ namespace Systems.Dialogue
         }
 
         private float DeltaTime => _useUnscaledTime ? Time.unscaledDeltaTime : Time.deltaTime;
+
+        private bool CanRunCoroutines => isActiveAndEnabled && gameObject.activeInHierarchy;
+
+        private void PlayPendingSequenceIfReady()
+        {
+            if (_pendingSequence == null || !CanRunCoroutines)
+                return;
+
+            DialogueSequence sequence = _pendingSequence;
+            _pendingSequence = null;
+            PlaySequence(sequence);
+        }
 
         private static float EaseOutBack(float t, float overshoot)
         {

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using Gameplay.Interaction;
 
 namespace Gameplay.Rope
 {
@@ -22,7 +23,7 @@ namespace Gameplay.Rope
             _hasTriggered = true;
 
             if (_muteAudioListener)
-                AudioListener.volume = _targetVolume;
+                InteractiveButton.ApplyExternalGameVolume(_targetVolume);
 
             if (_audioSourcesToAffect != null)
             {

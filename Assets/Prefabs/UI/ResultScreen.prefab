@@ -191,6 +191,10 @@ MonoBehaviour:
   _springRestLengthRatio: 1
   _springFrequency: 5
   _springDampingRatio: 0.3
+  _visualStyle: 0
+  _springTurnsPerSegment: 1
+  _springSamplesPerTurn: 8
+  _springAmplitude: 0.12
   _cutFadeDelay: 0.15
   _cutFadeDuration: 0.4
   _indestructible: 0
@@ -555,7 +559,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1613881467891320017
 Transform:
   m_ObjectHideFlags: 0
@@ -1063,6 +1067,10 @@ MonoBehaviour:
   _springRestLengthRatio: 1
   _springFrequency: 5
   _springDampingRatio: 0.3
+  _visualStyle: 0
+  _springTurnsPerSegment: 1
+  _springSamplesPerTurn: 8
+  _springAmplitude: 0.12
   _cutFadeDelay: 0.15
   _cutFadeDuration: 0.4
   _indestructible: 0

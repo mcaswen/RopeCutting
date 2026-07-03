@@ -332,6 +332,10 @@ MonoBehaviour:
   _springRestLengthRatio: 1
   _springFrequency: 5
   _springDampingRatio: 0.3
+  _visualStyle: 0
+  _springTurnsPerSegment: 1
+  _springSamplesPerTurn: 8
+  _springAmplitude: 0.12
   _cutFadeDelay: 0.15
   _cutFadeDuration: 0.4
   _indestructible: 0
@@ -2580,6 +2584,10 @@ MonoBehaviour:
   _springRestLengthRatio: 1
   _springFrequency: 5
   _springDampingRatio: 0.3
+  _visualStyle: 0
+  _springTurnsPerSegment: 1
+  _springSamplesPerTurn: 8
+  _springAmplitude: 0.12
   _cutFadeDelay: 0.15
   _cutFadeDuration: 0.4
   _indestructible: 0
@@ -2750,6 +2758,10 @@ MonoBehaviour:
   _springRestLengthRatio: 1
   _springFrequency: 5
   _springDampingRatio: 0.3
+  _visualStyle: 0
+  _springTurnsPerSegment: 1
+  _springSamplesPerTurn: 8
+  _springAmplitude: 0.12
   _cutFadeDelay: 0.15
   _cutFadeDuration: 0.4
   _indestructible: 0
@@ -3259,7 +3271,7 @@ Transform:
   m_GameObject: {fileID: 1268173134}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 10.72, z: -10}
+  m_LocalPosition: {x: 0, y: 0.15, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3337,7 +3349,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ad8f2e3c7a34f478bb9ad6d143ff012, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _activateOnAwake: 1
+  _activateOnAwake: 0
   _endingCharacter: {fileID: 2052916214}
   _screen1: {fileID: 0}
   _endingBirdConnectable: {fileID: 2052916213}
@@ -3661,6 +3673,10 @@ MonoBehaviour:
   _springRestLengthRatio: 1
   _springFrequency: 5
   _springDampingRatio: 0.3
+  _visualStyle: 0
+  _springTurnsPerSegment: 1
+  _springSamplesPerTurn: 8
+  _springAmplitude: 0.12
   _cutFadeDelay: 0.15
   _cutFadeDuration: 0.4
   _indestructible: 0
@@ -3854,6 +3870,10 @@ MonoBehaviour:
   _springRestLengthRatio: 1
   _springFrequency: 5
   _springDampingRatio: 0.3
+  _visualStyle: 0
+  _springTurnsPerSegment: 1
+  _springSamplesPerTurn: 8
+  _springAmplitude: 0.12
   _cutFadeDelay: 0.15
   _cutFadeDuration: 0.4
   _indestructible: 0
@@ -4062,6 +4082,10 @@ MonoBehaviour:
   _springRestLengthRatio: 1
   _springFrequency: 5
   _springDampingRatio: 0.3
+  _visualStyle: 0
+  _springTurnsPerSegment: 1
+  _springSamplesPerTurn: 8
+  _springAmplitude: 0.12
   _cutFadeDelay: 0.15
   _cutFadeDuration: 0.4
   _indestructible: 0
@@ -4170,6 +4194,10 @@ MonoBehaviour:
   _springRestLengthRatio: 1
   _springFrequency: 5
   _springDampingRatio: 0.3
+  _visualStyle: 0
+  _springTurnsPerSegment: 1
+  _springSamplesPerTurn: 8
+  _springAmplitude: 0.12
   _cutFadeDelay: 0.15
   _cutFadeDuration: 0.4
   _indestructible: 0
@@ -4271,6 +4299,10 @@ MonoBehaviour:
   _springRestLengthRatio: 1
   _springFrequency: 5
   _springDampingRatio: 0.3
+  _visualStyle: 0
+  _springTurnsPerSegment: 1
+  _springSamplesPerTurn: 8
+  _springAmplitude: 0.12
   _cutFadeDelay: 0.15
   _cutFadeDuration: 0.4
   _indestructible: 0
@@ -5267,6 +5299,10 @@ MonoBehaviour:
   _resultPanel: {fileID: 736130707}
   _resultScreen: {fileID: 320000000}
   _victoryResultDelay: 1
+  _introDialogueId: 
+  _victoryDialogueId: 
+  _failureDialogueId: 
+  _playIntroOnStart: 1
   _onVictory:
     m_PersistentCalls:
       m_Calls: []
@@ -5623,6 +5659,10 @@ MonoBehaviour:
   _springRestLengthRatio: 1
   _springFrequency: 5
   _springDampingRatio: 0.3
+  _visualStyle: 0
+  _springTurnsPerSegment: 1
+  _springSamplesPerTurn: 8
+  _springAmplitude: 0.12
   _cutFadeDelay: 0.15
   _cutFadeDuration: 0.4
   _indestructible: 0
@@ -6449,6 +6489,10 @@ MonoBehaviour:
   _springRestLengthRatio: 1
   _springFrequency: 5
   _springDampingRatio: 0.3
+  _visualStyle: 0
+  _springTurnsPerSegment: 1
+  _springSamplesPerTurn: 8
+  _springAmplitude: 0.12
   _cutFadeDelay: 0.15
   _cutFadeDuration: 0.4
   _indestructible: 0

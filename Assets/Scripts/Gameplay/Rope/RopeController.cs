@@ -97,6 +97,35 @@ namespace Gameplay.Rope
             CreateRopeChains();
         }
 
+        public void ConfigureAnchorToConnectable(
+            Transform startAnchorPoint,
+            RopeConnectable connectable,
+            Transform connectableAttachPoint = null)
+        {
+            _connectionMode = RopeConnectionMode.AnchorToConnectable;
+            _startAnchorPoint = startAnchorPoint;
+            _connectable = connectable;
+            _connectableAttachPoint = connectableAttachPoint;
+            _endAnchorPoint = null;
+            _legacyConnectedEndRigidbody = null;
+        }
+
+        public void ConfigureAnchorToAnchor(Transform startAnchorPoint, Transform endAnchorPoint)
+        {
+            _connectionMode = RopeConnectionMode.AnchorToAnchor;
+            _startAnchorPoint = startAnchorPoint;
+            _endAnchorPoint = endAnchorPoint;
+            _connectable = null;
+            _connectableAttachPoint = null;
+            _legacyConnectedEndRigidbody = null;
+        }
+
+        public void SetProtection(bool indestructible, bool disableNodeColliders)
+        {
+            _indestructible = indestructible;
+            _disableNodeColliders = disableNodeColliders;
+        }
+
         /// <summary>
         /// 创建物理节点链：AnchorToConnectable 为锚点 → 节点 → 可连接物；
         /// AnchorToAnchor 为起始锚点 → 节点 → 结束锚点。

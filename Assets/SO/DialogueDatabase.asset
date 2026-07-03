@@ -23,7 +23,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 83dc91a0c62cf9642b2f18a4bec6385b, type: 3}
       emotion: ""
     - lineType: 0
       speaker: 0
@@ -32,7 +32,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: f26e2bc9efd7c5b43804f411de60e787, type: 3}
       emotion: ""
     - lineType: 0
       speaker: 0
@@ -41,7 +41,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 200e948789ac2804389013c9e396177e, type: 3}
       emotion: ""
     - lineType: 0
       speaker: 0
@@ -50,7 +50,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: fc50d7cc929e9c14ba8f81d82f2a3bb9, type: 3}
       emotion: ""
     - lineType: 0
       speaker: 0
@@ -59,7 +59,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.8
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: b8847b609d6d78249bf253157a6cc5f0, type: 3}
       emotion: ""
     - lineType: 0
       speaker: 0
@@ -68,7 +68,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 94bb8c6c18b552445a143f36e7952f19, type: 3}
       emotion: ""
   - id: "level1_intro"
     description: "第一关进入"
@@ -80,7 +80,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: e0ff1c25002dd914083028936c222067, type: 3}
       emotion: ""
   - id: "level1_light_cut"
     description: "第一关切掉灯"
@@ -92,7 +92,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 58bd3488dc669c24abf37071e35ffed8, type: 3}
       emotion: "panic"
     - lineType: 0
       speaker: 0
@@ -101,7 +101,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 351057236905ad04fa8a16bc72fcb3a9, type: 3}
       emotion: "panic"
   - id: "level1_light_tap_no_light"
     description: "第一关点了几下仍然没灯"
@@ -113,7 +113,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 284263369da391b4ab7972a665fa2ce5, type: 3}
       emotion: "panic"
     - lineType: 0
       speaker: 0
@@ -122,7 +122,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 3c8fd341858ba2b45bda644e6003985c, type: 3}
       emotion: "taunt"
   - id: "level1_light_restored"
     description: "第一关灯重新打开"
@@ -134,7 +134,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 1c31f8f636005594aa40467097a773b3, type: 3}
       emotion: "relieved"
   - id: "level1_complete"
     description: "第一关完成"
@@ -146,7 +146,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: bbaf9536fcbab0246b307179c15ede2a, type: 3}
       emotion: "surprised"
     - lineType: 0
       speaker: 0
@@ -155,7 +155,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 56cdd2de82cd0f941a7f676b424d2aa3, type: 3}
       emotion: "urgent"
   - id: "level2_intro"
     description: "第二关进入"
@@ -167,7 +167,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: a627948067976534b984a217197ce83b, type: 3}
       emotion: "urgent"
   - id: "level2_dog_leash_cut"
     description: "第二关切掉狗绳"
@@ -179,7 +179,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: aacfde3e1809202409f57850afeff2dd, type: 3}
       emotion: "panic"
   - id: "level2_dog_candy_failure"
     description: "第二关糖给了狗后的失败"
@@ -191,7 +191,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 4edf3792500c19e4cb347f80242acd47, type: 3}
       emotion: "taunt"
   - id: "level2_power_cut"
     description: "第二关切掉电源线"
@@ -203,7 +203,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.35
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 549816d926182894780cf9b862938213, type: 3}
       emotion: "annoyed"
     - lineType: 0
       speaker: 0
@@ -212,7 +212,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: e4f6cf06cb3a27b40a859442065efea5, type: 3}
       emotion: ""
   - id: "level2_settings_hint"
     description: "第二关玩家狂点但找不到设置按钮"
@@ -224,7 +224,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 3de65074367e63b42be0dfba8926bc8d, type: 3}
       emotion: "hint"
   - id: "level2_complete"
     description: "第二关接线完成并过关"
@@ -236,7 +236,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 2ecfdb98fb39e274299dd40d5dc959b8, type: 3}
       emotion: "pleased"
     - lineType: 0
       speaker: 0
@@ -245,7 +245,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 47dc29abd21d976498fabf0e0463fe4c, type: 3}
       emotion: ""
   - id: "level3_muted"
     description: "第三关关掉声音后，仅字幕"
@@ -257,7 +257,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 515d239757dbdec44b42d74692a89cdb, type: 3}
       emotion: "confused"
     - lineType: 0
       speaker: 0
@@ -266,7 +266,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 3291376f52717434d8466318d1522653, type: 3}
       emotion: "annoyed"
     - lineType: 0
       speaker: 0
@@ -275,7 +275,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 7f2dd6eaff930564cb7dfea6bcbfb075, type: 3}
       emotion: "annoyed"
     - lineType: 0
       speaker: 0
@@ -284,7 +284,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 68fcf4a55afc50445954e9fc09131289, type: 3}
       emotion: "urgent"
   - id: "level3_unmuted"
     description: "第三关重新打开声音"
@@ -296,7 +296,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 9fbd8964727455a48907160a97611b4d, type: 3}
       emotion: "relieved"
   - id: "level3_network_cut"
     description: "第三关切掉网线"
@@ -308,7 +308,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: a5fffba153df3a14b822d6e55b38eea8, type: 3}
       emotion: "confused"
     - lineType: 0
       speaker: 0
@@ -317,7 +317,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: ade5582f2bc676840b4798a0b2fefd84, type: 3}
       emotion: "suspicious"
     - lineType: 0
       speaker: 0
@@ -326,7 +326,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 63ce5986b7ef189499d09cd3665174aa, type: 3}
       emotion: "glitch"
   - id: "level3_bird_escape"
     description: "第三关把鸟放走"
@@ -338,7 +338,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 30ac182408eea31479ca7c8e30d5f710, type: 3}
       emotion: "angry"
     - lineType: 0
       speaker: 1
@@ -347,7 +347,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 8269d183577f8ab45955ac6b7973504e, type: 3}
       emotion: "calm"
     - lineType: 0
       speaker: 0
@@ -356,7 +356,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 08926b79252ae7148b4ef2bed08f89c8, type: 3}
       emotion: "threat"
     - lineType: 0
       speaker: 1
@@ -365,7 +365,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 3c30c1d39249b2e49ad6d0f362325159, type: 3}
       emotion: "sad"
     - lineType: 0
       speaker: 0
@@ -374,7 +374,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 078ed5256b73de044a39e903b5fc775c, type: 3}
       emotion: "threat"
     - lineType: 0
       speaker: 1
@@ -383,7 +383,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: e09b7cf6ec3761146a8a66c08f687181, type: 3}
       emotion: "determined"
     - lineType: 0
       speaker: 0
@@ -392,7 +392,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: ec656b45f7291fa4cb06eb27417c456e, type: 3}
       emotion: "threat"
   - id: "ending_route_expected"
     description: "结束界面路线一"

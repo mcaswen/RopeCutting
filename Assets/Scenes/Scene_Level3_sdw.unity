@@ -176,7 +176,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 786058539834651336, guid: d927cac1ced5f08458f1f323d80dd7d4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 6
+      value: 4.15
       objectReference: {fileID: 0}
     - target: {fileID: 786058539834651336, guid: d927cac1ced5f08458f1f323d80dd7d4, type: 3}
       propertyPath: m_LocalPosition.y
@@ -255,7 +255,7 @@ GameObject:
   - component: {fileID: 286041115}
   m_Layer: 0
   m_Name: FailureDetector1
-  m_TagString: Untagged
+  m_TagString: Finish
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -269,8 +269,8 @@ Transform:
   m_GameObject: {fileID: 286041113}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.8757, y: -0.3678, z: 0}
-  m_LocalScale: {x: 3.0369499, y: 16.016758, z: 1}
+  m_LocalPosition: {x: 15.3, y: -0.3678, z: 0}
+  m_LocalScale: {x: 3.0369499, y: 59.949123, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 774059133}
@@ -344,11 +344,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 786058539834651336, guid: d927cac1ced5f08458f1f323d80dd7d4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 6.06
+      value: 0.23
       objectReference: {fileID: 0}
     - target: {fileID: 786058539834651336, guid: d927cac1ced5f08458f1f323d80dd7d4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.89
+      value: 6.1
       objectReference: {fileID: 0}
     - target: {fileID: 786058539834651336, guid: d927cac1ced5f08458f1f323d80dd7d4, type: 3}
       propertyPath: m_LocalPosition.z
@@ -959,10 +959,10 @@ MonoBehaviour:
   _flyBool: IsFlying
   _flyStateName: 
   _movementDelay: 1
-  _flyVelocity: {x: 0, y: 4}
+  _flyVelocity: {x: 0, y: 6}
   _flyAcceleration: 0
   _maxFlySpeed: 8
-  _disappearAfterSeconds: -1
+  _disappearAfterSeconds: 2.5
   _onFlyStarted:
     m_PersistentCalls:
       m_Calls: []
@@ -1008,7 +1008,7 @@ GameObject:
   - component: {fileID: 649847912}
   m_Layer: 0
   m_Name: FailureDetector2
-  m_TagString: Untagged
+  m_TagString: Finish
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1022,8 +1022,8 @@ Transform:
   m_GameObject: {fileID: 649847910}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 1.0957, y: -6.9644, z: 0}
-  m_LocalScale: {x: 3.2881057, y: 22.633764, z: 1}
+  m_LocalPosition: {x: 1.1, y: -9.79, z: 0}
+  m_LocalScale: {x: 3.2881057, y: 63.37454, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 774059133}
@@ -1179,8 +1179,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _resultText: {fileID: 2076012890}
   _restartButton: {fileID: 533968262}
-  _nextLevelButton: {fileID: 0}
-  _nextLevelSceneName: Scene_Level2_wanyun
   _failureMessage: Failed
   _victoryMessage: Win!!
   _defeatMessage: "\u5931\u8D25\uFF01"
@@ -1409,6 +1407,8 @@ MonoBehaviour:
   _springDampingRatio: 0.3
   _cutFadeDelay: 0.15
   _cutFadeDuration: 0.4
+  _indestructible: 0
+  _disableNodeColliders: 0
   _screenGlitchEffect: {fileID: 1268173138}
   _glitchDuration: 1
   _glitchStrength: 1
@@ -1908,7 +1908,7 @@ GameObject:
   - component: {fileID: 1437511780}
   m_Layer: 0
   m_Name: FailureDetector4
-  m_TagString: Untagged
+  m_TagString: Finish
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1922,8 +1922,8 @@ Transform:
   m_GameObject: {fileID: 1437511778}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -0.6975, y: 7.07, z: 0}
-  m_LocalScale: {x: 3.2881057, y: 25.719503, z: 1}
+  m_LocalPosition: {x: -0.7, y: 11.03, z: 0}
+  m_LocalScale: {x: 3.2881057, y: 93.87619, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 774059133}
@@ -2193,6 +2193,8 @@ MonoBehaviour:
   _springDampingRatio: 0.3
   _cutFadeDelay: 0.15
   _cutFadeDuration: 0.4
+  _indestructible: 0
+  _disableNodeColliders: 0
   _muteAudioListener: 1
   _audioSourcesToAffect: []
   _targetVolume: 0
@@ -2292,7 +2294,7 @@ GameObject:
   - component: {fileID: 1686259430}
   m_Layer: 0
   m_Name: FailureDetector3
-  m_TagString: Untagged
+  m_TagString: Finish
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2306,8 +2308,8 @@ Transform:
   m_GameObject: {fileID: 1686259428}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
-  m_LocalPosition: {x: -11.63, y: -1.5616, z: 0}
-  m_LocalScale: {x: 3.2881057, y: 17.943901, z: 1}
+  m_LocalPosition: {x: -14.71, y: -1.5616, z: 0}
+  m_LocalScale: {x: 3.2881057, y: 61.393265, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 774059133}
@@ -2707,6 +2709,7 @@ MonoBehaviour:
   _character: {fileID: 212537270}
   _candy: {fileID: 1865679799}
   _resultPanel: {fileID: 736130707}
+  _resultScreen: {fileID: 320000000}
   _victoryResultDelay: 1
   _onVictory:
     m_PersistentCalls:
@@ -2722,6 +2725,74 @@ MonoBehaviour:
   _hideLineHeadOnStart: 1
   _hideLoadingOnStart: 1
   _restartLoadingAnimationOnShow: 1
+--- !u!114 &320000000 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5795316148558235026, guid: fe814c3a5441b704aa9c5e15158d1ecd, type: 3}
+  m_PrefabInstance: {fileID: 320000001}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14e41fbad40a0134f810c8d420adb12f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1001 &320000001
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 8210003813812184588, guid: fe814c3a5441b704aa9c5e15158d1ecd, type: 3}
+      propertyPath: m_Name
+      value: ResultScreen
+      objectReference: {fileID: 0}
+    - target: {fileID: 8819684892626034780, guid: fe814c3a5441b704aa9c5e15158d1ecd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.3786136
+      objectReference: {fileID: 0}
+    - target: {fileID: 8819684892626034780, guid: fe814c3a5441b704aa9c5e15158d1ecd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.5614501
+      objectReference: {fileID: 0}
+    - target: {fileID: 8819684892626034780, guid: fe814c3a5441b704aa9c5e15158d1ecd, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.004928958
+      objectReference: {fileID: 0}
+    - target: {fileID: 8819684892626034780, guid: fe814c3a5441b704aa9c5e15158d1ecd, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8819684892626034780, guid: fe814c3a5441b704aa9c5e15158d1ecd, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8819684892626034780, guid: fe814c3a5441b704aa9c5e15158d1ecd, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8819684892626034780, guid: fe814c3a5441b704aa9c5e15158d1ecd, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8819684892626034780, guid: fe814c3a5441b704aa9c5e15158d1ecd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8819684892626034780, guid: fe814c3a5441b704aa9c5e15158d1ecd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8819684892626034780, guid: fe814c3a5441b704aa9c5e15158d1ecd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: fe814c3a5441b704aa9c5e15158d1ecd, type: 3}
 --- !u!1001 &1858261687
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3038,6 +3109,8 @@ MonoBehaviour:
   _springDampingRatio: 0.3
   _cutFadeDelay: 0.15
   _cutFadeDuration: 0.4
+  _indestructible: 0
+  _disableNodeColliders: 0
   _muteAudioListener: 1
   _audioSourcesToAffect: []
   _targetVolume: 0
@@ -3512,7 +3585,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6637661977662579194, guid: e8397cdc06b08a64980157da3fb06c59, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5.68
+      value: 3.83
       objectReference: {fileID: 0}
     - target: {fileID: 6637661977662579194, guid: e8397cdc06b08a64980157da3fb06c59, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3583,3 +3656,4 @@ SceneRoots:
   - {fileID: 835024478}
   - {fileID: 358497934}
   - {fileID: 1234022439}
+  - {fileID: 320000001}

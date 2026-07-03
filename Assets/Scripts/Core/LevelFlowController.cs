@@ -41,8 +41,14 @@ namespace Core
 
         protected virtual void Awake()
         {
+            if (_resultScreen == null)
+                ResolveResultScreen();
+
             if (_resultPanel != null)
                 _resultPanel.gameObject.SetActive(false);
+
+            if (_resultScreen != null)
+                _resultScreen.gameObject.SetActive(false);
         }
 
         protected virtual void OnEnable()
@@ -143,6 +149,15 @@ namespace Core
 
             _onFailure?.Invoke();
             Debug.Log("Failure!");
+        }
+
+        private void ResolveResultScreen()
+        {
+#if UNITY_2022_2_OR_NEWER
+            _resultScreen = FindFirstObjectByType<UI.ResultScreen>(FindObjectsInactive.Include);
+#else
+            _resultScreen = FindObjectOfType<UI.ResultScreen>(true);
+#endif
         }
 
         protected static bool IsColliderFromObject(Collider2D collider, GameObject target)

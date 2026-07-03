@@ -1,26 +1,24 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace UI
 {
     /// <summary>
     /// 根据字幕内容自动调整背景尺寸。挂在字幕预制体上后，可将 DialoguePlayer.OnTextChanged 绑定到 SetText。
     /// </summary>
+    [ExecuteAlways]
     [DisallowMultipleComponent]
     public class AdaptiveSubtitleBubble : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private TextMeshProUGUI _subtitleText;
-        [SerializeField] private RectTransform _background;
+        [SerializeField] private TextMeshPro _subtitleText;
+        [SerializeField] private SpriteRenderer _background;
+        [SerializeField] private BoxCollider2D _boxCollider;
         [SerializeField] private GameObject _visibilityRoot;
 
         [Header("Sizing")]
-        [SerializeField] private Vector2 _padding = new Vector2(48f, 28f);
-        [SerializeField, Min(0f)] private float _minWidth = 160f;
-        [SerializeField, Min(0f)] private float _maxWidth = 760f;
-        [SerializeField, Min(0f)] private float _minHeight = 56f;
-        [SerializeField] private bool _resizeTextRect = true;
+        [SerializeField] private Vector2 _padding = new Vector2(0.48f, 0.28f);
+        [SerializeField] private bool _resizeBoxCollider = true;
 
         [Header("Behavior")]
         [SerializeField] private bool _hideWhenEmpty = true;
@@ -29,33 +27,41 @@ namespace UI
 
         private RectTransform _textRect;
         private string _currentText = string.Empty;
+        private readonly Vector3[] _textWorldCorners = new Vector3[4];
+        private const float LegacyUiUnitScale = 0.01f;
+        private const float LegacyUiUnitThreshold = 20f;
+        private const float SizeEpsilon = 0.0001f;
 
         private void Awake()
         {
+            NormalizeLegacyPaddingIfNeeded();
             ResolveReferences();
             _currentText = _subtitleText != null ? _subtitleText.text : string.Empty;
             RefreshSize();
-            ApplyVisibility();
+            ApplyVisibilityInPlayMode();
         }
 
         private void OnEnable()
         {
+            NormalizeLegacyPaddingIfNeeded();
             ResolveReferences();
             RefreshSize();
-            ApplyVisibility();
+            ApplyVisibilityInPlayMode();
         }
 
         private void LateUpdate()
         {
-            if (_refreshEveryFrame)
+            if (_refreshEveryFrame || !Application.IsPlaying(gameObject))
                 RefreshSize();
         }
 
 #if UNITY_EDITOR
         private void OnValidate()
         {
+            NormalizeLegacyPaddingIfNeeded();
             ResolveReferences();
             RefreshSize();
+            ApplyVisibilityInPlayMode();
         }
 #endif
 
@@ -68,6 +74,13 @@ namespace UI
 
             RefreshSize();
             ApplyVisibility();
+        }
+
+        public void SyncInEditor()
+        {
+            NormalizeLegacyPaddingIfNeeded();
+            ResolveReferences();
+            RefreshSize();
         }
 
         public void Clear()
@@ -87,64 +100,143 @@ namespace UI
 
         public void RefreshSize()
         {
+            NormalizeLegacyPaddingIfNeeded();
+
             if (_subtitleText == null || _background == null)
                 return;
 
+            ResolveTextRect();
             if (_textRect == null)
-                _textRect = _subtitleText.rectTransform;
+                return;
 
-            string text = _subtitleText.text ?? string.Empty;
-            float maxTextWidth = GetMaxTextWidth();
-            float unconstrainedWidth = _subtitleText.GetPreferredValues(text, Mathf.Infinity, 0f).x;
-            float textWidth = maxTextWidth > 0f
-                ? Mathf.Min(unconstrainedWidth, maxTextWidth)
-                : unconstrainedWidth;
+            _subtitleText.ForceMeshUpdate(false, true);
+            Bounds textFrame = GetTextFrameBounds();
 
-            textWidth = Mathf.Max(0f, textWidth);
-            Vector2 preferredTextSize = _subtitleText.GetPreferredValues(text, textWidth, 0f);
+            Vector2 targetCenter = new Vector2(textFrame.center.x, textFrame.center.y);
+            Vector2 targetSize = new Vector2(
+                textFrame.size.x + Mathf.Max(0f, _padding.x),
+                textFrame.size.y + Mathf.Max(0f, _padding.y));
 
-            float targetWidth = preferredTextSize.x + Mathf.Max(0f, _padding.x);
-            float targetHeight = preferredTextSize.y + Mathf.Max(0f, _padding.y);
+            SetSpriteFrame(targetCenter, targetSize);
 
-            targetWidth = Mathf.Max(_minWidth, targetWidth);
-            if (_maxWidth > 0f)
-                targetWidth = Mathf.Min(_maxWidth, targetWidth);
-
-            targetHeight = Mathf.Max(_minHeight, targetHeight);
-
-            SetRectSize(_background, targetWidth, targetHeight);
-
-            if (_resizeTextRect && _textRect != null)
-            {
-                float textRectWidth = Mathf.Max(0f, targetWidth - Mathf.Max(0f, _padding.x));
-                float textRectHeight = Mathf.Max(0f, targetHeight - Mathf.Max(0f, _padding.y));
-                SetRectSize(_textRect, textRectWidth, textRectHeight);
-            }
-
-            LayoutRebuilder.ForceRebuildLayoutImmediate(_background);
+            if (_resizeBoxCollider)
+                ResizeBoxCollider(targetCenter, targetSize);
         }
 
         private void ResolveReferences()
         {
             if (_subtitleText == null)
-                _subtitleText = GetComponentInChildren<TextMeshProUGUI>(true);
+                _subtitleText = GetComponentInChildren<TextMeshPro>(true);
 
-            if (_subtitleText != null)
-                _textRect = _subtitleText.rectTransform;
+            ResolveTextRect();
 
             if (_background == null)
-                _background = transform as RectTransform;
+                _background = GetComponentInChildren<SpriteRenderer>(true);
+
+            if (_boxCollider == null)
+                _boxCollider = GetComponent<BoxCollider2D>();
 
             if (_visibilityRoot == null)
                 _visibilityRoot = gameObject;
         }
 
-        private float GetMaxTextWidth()
+        private void NormalizeLegacyPaddingIfNeeded()
         {
-            if (_maxWidth <= 0f)
-                return 0f;
+            if (_padding.x > LegacyUiUnitThreshold || _padding.y > LegacyUiUnitThreshold)
+                _padding *= LegacyUiUnitScale;
+        }
 
-            return Mathf.Max(0f, _maxWidth - Mathf.Max(0f, _padding.x));
+        private void ResolveTextRect()
+        {
+            _textRect = _subtitleText != null ? _subtitleText.rectTransform : null;
+        }
+
+        private Bounds GetTextFrameBounds()
+        {
+            _textRect.GetWorldCorners(_textWorldCorners);
+
+            Vector3 min = transform.InverseTransformPoint(_textWorldCorners[0]);
+            Vector3 max = min;
+
+            for (int i = 1; i < _textWorldCorners.Length; i++)
+            {
+                Vector3 localCorner = transform.InverseTransformPoint(_textWorldCorners[i]);
+                min = Vector3.Min(min, localCorner);
+                max = Vector3.Max(max, localCorner);
+            }
+
+            Bounds bounds = new Bounds();
+            bounds.SetMinMax(min, max);
+            return bounds;
+        }
+
+        private void SetSpriteFrame(Vector2 center, Vector2 size)
+        {
+            if (_background == null)
+                return;
+
+            SetBackgroundCenter(center);
+
+            if (_background.drawMode == SpriteDrawMode.Simple || _background.sprite == null)
+            {
+                Vector2 spriteSize = _background.sprite != null ? _background.sprite.bounds.size : Vector2.one;
+                Vector3 localScale = _background.transform.localScale;
+
+                if (spriteSize.x > Mathf.Epsilon)
+                    localScale.x = size.x / spriteSize.x;
+                if (spriteSize.y > Mathf.Epsilon)
+                    localScale.y = size.y / spriteSize.y;
+
+                if (!Approximately(_background.transform.localScale, localScale))
+                    _background.transform.localScale = localScale;
+
+                return;
+            }
+
+            Vector3 scale = _background.transform.localScale;
+            float sizeX = Mathf.Abs(scale.x) > Mathf.Epsilon ? size.x / Mathf.Abs(scale.x) : size.x;
+            float sizeY = Mathf.Abs(scale.y) > Mathf.Epsilon ? size.y / Mathf.Abs(scale.y) : size.y;
+            Vector2 rendererSize = new Vector2(sizeX, sizeY);
+
+            if (!Approximately(_background.size, rendererSize))
+                _background.size = rendererSize;
+        }
+
+        private void SetBackgroundCenter(Vector2 center)
+        {
+            if (_background.transform == transform)
+                return;
+
+            Vector3 worldCenter = transform.TransformPoint(new Vector3(center.x, center.y, 0f));
+            Transform backgroundParent = _background.transform.parent;
+            Vector3 localPosition = backgroundParent != null
+                ? backgroundParent.InverseTransformPoint(worldCenter)
+                : worldCenter;
+
+            localPosition.z = _background.transform.localPosition.z;
+
+            if (!Approximately(_background.transform.localPosition, localPosition))
+                _background.transform.localPosition = localPosition;
+        }
+
+        private void ResizeBoxCollider(Vector2 center, Vector2 size)
+        {
+            if (_boxCollider == null)
+                return;
+
+            Vector3 worldSize = transform.TransformVector(new Vector3(size.x, size.y, 0f));
+            Vector3 colliderSize = _boxCollider.transform.InverseTransformVector(worldSize);
+            Vector2 targetSize = new Vector2(Mathf.Abs(colliderSize.x), Mathf.Abs(colliderSize.y));
+
+            if (!Approximately(_boxCollider.size, targetSize))
+                _boxCollider.size = targetSize;
+
+            Vector3 worldCenter = transform.TransformPoint(new Vector3(center.x, center.y, 0f));
+            Vector3 colliderCenter = _boxCollider.transform.InverseTransformPoint(worldCenter);
+            Vector2 targetOffset = new Vector2(colliderCenter.x, colliderCenter.y);
+
+            if (!Approximately(_boxCollider.offset, targetOffset))
+                _boxCollider.offset = targetOffset;
         }
 
         private void ApplyVisibility()
@@ -158,16 +250,30 @@ namespace UI
             SetVisible(!string.IsNullOrWhiteSpace(_currentText));
         }
 
+        private void ApplyVisibilityInPlayMode()
+        {
+            if (Application.IsPlaying(gameObject))
+                ApplyVisibility();
+        }
+
         private void SetVisible(bool visible)
         {
             if (_visibilityRoot != null && _visibilityRoot.activeSelf != visible)
                 _visibilityRoot.SetActive(visible);
         }
 
-        private static void SetRectSize(RectTransform rectTransform, float width, float height)
+        private static bool Approximately(Vector2 current, Vector2 target)
         {
-            rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
-            rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
+            return Mathf.Abs(current.x - target.x) <= SizeEpsilon
+                && Mathf.Abs(current.y - target.y) <= SizeEpsilon;
         }
+
+        private static bool Approximately(Vector3 current, Vector3 target)
+        {
+            return Mathf.Abs(current.x - target.x) <= SizeEpsilon
+                && Mathf.Abs(current.y - target.y) <= SizeEpsilon
+                && Mathf.Abs(current.z - target.z) <= SizeEpsilon;
+        }
+
     }
 }

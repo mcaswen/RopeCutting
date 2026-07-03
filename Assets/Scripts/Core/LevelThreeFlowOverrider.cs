@@ -1,3 +1,4 @@
+using System.Collections;
 using Gameplay.Collectible;
 using Gameplay.Interaction;
 using Gameplay.Rope;
@@ -18,8 +19,17 @@ namespace Core
         [SerializeField] private bool _hideLoadingOnStart = true;
         [SerializeField] private bool _restartLoadingAnimationOnShow = true;
 
+        [Header("Level 3 - Ending Scene")]
+        [SerializeField] private Camera _mainCamera;
+        [SerializeField] private Transform _endingCameraTarget;
+        [SerializeField, Min(0f)] private float _endingCameraMoveDuration = 1.5f;
+        [SerializeField] private AnimationCurve _endingCameraMoveCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+        [SerializeField] private LevelThreeEndingFlow _endingFlow;
+
         private bool _networkDisconnected;
         private bool _candyCollected;
+        private bool _endingTransitionStarted;
+        private Coroutine _endingTransitionRoutine;
 
         protected override void Awake()
         {
@@ -58,6 +68,12 @@ namespace Core
             if (_flyingCharacter != null)
                 _flyingCharacter.Disappearing -= HandleFlyingCharacterDisappearing;
 
+            if (_endingTransitionRoutine != null)
+            {
+                StopCoroutine(_endingTransitionRoutine);
+                _endingTransitionRoutine = null;
+            }
+
             base.OnDisable();
         }
 
@@ -71,10 +87,16 @@ namespace Core
 
         private void HandleFlyingCharacterDisappearing(FlyingCharacterRopeConnectable flyingCharacter)
         {
-            if (!IsPlaying || _candyCollected)
+            if (!IsPlaying)
                 return;
 
-            CompleteFailure();
+            if (!_candyCollected)
+            {
+                CompleteFailure();
+                return;
+            }
+
+            StartEndingTransition();
         }
 
         private void HandleNetworkCableCut(Vector3 hitPoint)
@@ -129,6 +151,71 @@ namespace Core
                 animator.Play(0, -1, 0f);
         }
 
+        private void StartEndingTransition()
+        {
+            if (_endingTransitionStarted)
+                return;
+
+            _endingTransitionStarted = true;
+
+            if (_endingTransitionRoutine != null)
+                StopCoroutine(_endingTransitionRoutine);
+
+            _endingTransitionRoutine = StartCoroutine(EndingTransitionRoutine());
+        }
+
+        private IEnumerator EndingTransitionRoutine()
+        {
+            LockPlayerInput();
+
+            yield return MoveCameraToEndingTarget();
+
+            UnlockPlayerInput();
+
+            if (_endingFlow != null)
+                _endingFlow.ActivateFinalScene();
+
+            _endingTransitionRoutine = null;
+        }
+
+        private IEnumerator MoveCameraToEndingTarget()
+        {
+            if (_endingCameraTarget == null)
+                yield break;
+
+            if (_mainCamera == null)
+                _mainCamera = Camera.main;
+
+            if (_mainCamera == null)
+                yield break;
+
+            Transform cameraTransform = _mainCamera.transform;
+            Vector3 startPosition = cameraTransform.position;
+            Quaternion startRotation = cameraTransform.rotation;
+            Vector3 targetPosition = _endingCameraTarget.position;
+            Quaternion targetRotation = _endingCameraTarget.rotation;
+
+            if (_endingCameraMoveDuration <= 0f)
+            {
+                cameraTransform.SetPositionAndRotation(targetPosition, targetRotation);
+                yield break;
+            }
+
+            float elapsed = 0f;
+            while (elapsed < _endingCameraMoveDuration)
+            {
+                elapsed += Time.deltaTime;
+                float normalized = Mathf.Clamp01(elapsed / _endingCameraMoveDuration);
+                float eased = _endingCameraMoveCurve != null ? _endingCameraMoveCurve.Evaluate(normalized) : normalized;
+
+                cameraTransform.position = Vector3.LerpUnclamped(startPosition, targetPosition, eased);
+                cameraTransform.rotation = Quaternion.SlerpUnclamped(startRotation, targetRotation, eased);
+                yield return null;
+            }
+
+            cameraTransform.SetPositionAndRotation(targetPosition, targetRotation);
+        }
+
         private void ResolveReferences()
         {
             if (_networkCableRope == null)
@@ -155,6 +242,18 @@ namespace Core
                 _flyingCharacter = FindFirstObjectByType<FlyingCharacterRopeConnectable>(FindObjectsInactive.Include);
 #else
                 _flyingCharacter = FindObjectOfType<FlyingCharacterRopeConnectable>(true);
+#endif
+            }
+
+            if (_mainCamera == null)
+                _mainCamera = Camera.main;
+
+            if (_endingFlow == null)
+            {
+#if UNITY_2022_2_OR_NEWER
+                _endingFlow = FindFirstObjectByType<LevelThreeEndingFlow>(FindObjectsInactive.Include);
+#else
+                _endingFlow = FindObjectOfType<LevelThreeEndingFlow>(true);
 #endif
             }
 

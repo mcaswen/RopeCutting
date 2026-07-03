@@ -2,6 +2,7 @@ using System.Collections;
 using Gameplay.Character;
 using Gameplay.Collectible;
 using Systems;
+using Systems.Dialogue;
 using UI;
 using UnityEngine;
 using UnityEngine.Events;
@@ -26,6 +27,12 @@ namespace Core
 
         [SerializeField, Min(0f)] private float _victoryResultDelay = 1f;
 
+        [Header("Dialogue (optional)")]
+        [SerializeField] private string _introDialogueId;
+        [SerializeField] private string _victoryDialogueId;
+        [SerializeField] private string _failureDialogueId;
+        [SerializeField] private bool _playIntroOnStart = true;
+
         [Header("Events")]
         [SerializeField] private UnityEvent _onVictory;
         [SerializeField] private UnityEvent _onFailure;
@@ -49,6 +56,12 @@ namespace Core
         {
             if (_character != null)
                 _character.OnCandyCollected.AddListener(CompleteVictory);
+        }
+
+        protected virtual void Start()
+        {
+            if (_playIntroOnStart && !string.IsNullOrWhiteSpace(_introDialogueId))
+                DialogueManager.Instance?.Play(_introDialogueId);
         }
 
         protected virtual void OnDisable()
@@ -117,6 +130,18 @@ namespace Core
         {
             SfxPlayer.Play(SfxId.Win);
 
+            if (!string.IsNullOrWhiteSpace(_victoryDialogueId))
+            {
+                // 先播胜利对话，播完再显示结算
+                DialogueManager.Instance?.Play(_victoryDialogueId, ShowVictoryUI);
+                return;
+            }
+
+            ShowVictoryUI();
+        }
+
+        private void ShowVictoryUI()
+        {
             if (_resultScreen != null)
                 _resultScreen.ShowVictory();
             else if (_resultPanel != null)

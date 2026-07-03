@@ -404,7 +404,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 966a13147525c1948a0dadd054dab54d, type: 3}
       emotion: "calm"
     - lineType: 0
       speaker: 0
@@ -413,7 +413,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 1fa62aa9232b38a4a92b2e8518e6d8d1, type: 3}
       emotion: "calm"
     - lineType: 0
       speaker: 0
@@ -422,7 +422,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 9d3f171ea9b7aaf44b741b84e7816211, type: 3}
       emotion: "calm"
     - lineType: 0
       speaker: 0
@@ -431,7 +431,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 7bbc6c4c55a4c4f46a1f17fc6289dac0, type: 3}
       emotion: "calm"
   - id: "ending_route_escape"
     description: "结束界面路线二"
@@ -443,7 +443,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 678614efa7e86b2418370d5cc723bdad, type: 3}
       emotion: "grateful"
     - lineType: 0
       speaker: 1
@@ -452,7 +452,7 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 3c79560c3c7a9934ca76b9d87616dffe, type: 3}
       emotion: "grateful"
     - lineType: 0
       speaker: 1
@@ -461,5 +461,5 @@ MonoBehaviour:
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: f21d72c7a892be141ab61450ca81230b, type: 3}
       emotion: "grateful"

@@ -278,22 +278,40 @@ namespace Gameplay.Interaction
         {
             volume = Mathf.Clamp01(volume);
             AudioListener.volume = volume;
-
-            if (_volumeSlider != null)
-                _volumeSlider.SetValueWithoutNotify(volume);
+            SyncVolumeSliderToVolume(volume);
 
             _onVolumeChanged?.Invoke(volume);
         }
 
         private void SyncVolumeSliderToCurrentVolume()
         {
+            SyncVolumeSliderToVolume(AudioListener.volume);
+        }
+
+        private void SyncVolumeSliderToVolume(float volume)
+        {
             if (_volumeSlider != null)
-                _volumeSlider.SetValueWithoutNotify(Mathf.Clamp01(AudioListener.volume));
+                _volumeSlider.SetValueWithoutNotify(Mathf.Clamp01(volume));
         }
 
         private void HandleVolumeSliderValueChanged(float volume)
         {
             SetGameVolume(volume);
+        }
+
+        public static void ApplyExternalGameVolume(float volume)
+        {
+            volume = Mathf.Clamp01(volume);
+            AudioListener.volume = volume;
+
+            for (int i = 0; i < Instances.Count; i++)
+            {
+                InteractiveButton button = Instances[i];
+                if (button == null || button._mode != InteractionMode.VolumeSliderOnClick)
+                    continue;
+
+                button.SyncVolumeSliderToVolume(volume);
+            }
         }
 
         private void RotateByStep()

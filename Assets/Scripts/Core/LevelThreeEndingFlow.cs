@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Gameplay.Character;
 using Gameplay.Rope;
+using Systems.Dialogue;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
@@ -13,9 +14,15 @@ namespace Core
         [Header("Activation")]
         [SerializeField] private bool _activateOnAwake;
 
+        [Header("Ending Screen")]
+        [FormerlySerializedAs("_screen1")]
+        [SerializeField] private GameObject _endingScreen;
+        [FormerlySerializedAs("_screen2")]
+        [SerializeField, HideInInspector] private GameObject _legacyEndingScreen2;
+
         [Header("Ending 1")]
         [SerializeField] private Character _endingCharacter;
-        [SerializeField] private GameObject _screen1;
+        [SerializeField] private string _ending1SequenceId;
 
         [Header("Ending 2 - Bird")]
         [SerializeField] private RopeConnectable _endingBirdConnectable;
@@ -28,7 +35,7 @@ namespace Core
         [SerializeField, Min(0.01f)] private float _birdMoveToTrans3Duration = 1f;
         [SerializeField] private AnimationCurve _birdMoveCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
         [SerializeField] private bool _disableBirdConnectableMotionOnFlight = true;
-        [SerializeField] private GameObject _screen2;
+        [SerializeField] private string _ending2SequenceId;
 
         [Header("Bird Animation")]
         [SerializeField] private Animator _birdAnimator;
@@ -94,8 +101,7 @@ namespace Core
         private void Awake()
         {
             ResolveReferences();
-            SetScreenActive(_screen1, false);
-            SetScreenActive(_screen2, false);
+            SetScreenActive(_endingScreen, false);
 
             _isActive = _activateOnAwake;
         }
@@ -140,7 +146,7 @@ namespace Core
                 return;
 
             _endingCompleted = true;
-            SetScreenActive(_screen1, true);
+            ShowEndingScreen(_ending1SequenceId);
             _onScreen1Requested?.Invoke();
         }
 
@@ -203,7 +209,7 @@ namespace Core
                 yield return _letterRoutine;
 
             _endingCompleted = true;
-            SetScreenActive(_screen2, true);
+            ShowEndingScreen(_ending2SequenceId);
             _onScreen2Requested?.Invoke();
             _birdRoutine = null;
         }
@@ -474,6 +480,9 @@ namespace Core
 
         private void ResolveReferences()
         {
+            if (_endingScreen == null)
+                _endingScreen = _legacyEndingScreen2;
+
             if (_endingBirdConnectable != null)
             {
                 if (_endingCharacter == null)
@@ -515,6 +524,27 @@ namespace Core
         {
             if (screen != null)
                 screen.SetActive(active);
+        }
+
+        private void ShowEndingScreen(string sequenceId)
+        {
+            SetScreenActive(_endingScreen, true);
+            PlayEndingScreenSequence(sequenceId);
+        }
+
+        private void PlayEndingScreenSequence(string sequenceId)
+        {
+            if (_endingScreen == null || string.IsNullOrWhiteSpace(sequenceId))
+                return;
+
+            RopeSubtitleSequencePlayer sequencePlayer = _endingScreen.GetComponentInChildren<RopeSubtitleSequencePlayer>(true);
+            if (sequencePlayer == null)
+            {
+                Debug.LogWarning($"{nameof(LevelThreeEndingFlow)} could not find {nameof(RopeSubtitleSequencePlayer)} on ending screen '{_endingScreen.name}'.", _endingScreen);
+                return;
+            }
+
+            sequencePlayer.PlaySequence(sequenceId);
         }
     }
 }

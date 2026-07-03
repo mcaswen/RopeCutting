@@ -1,6 +1,7 @@
 using Systems.Dialogue;
 using TMPro;
 using UnityEngine;
+using DG.Tweening;
 
 namespace UI
 {
@@ -15,6 +16,8 @@ namespace UI
 
         private DialoguePlayer _player;
         private bool _subscribed;
+        private Tween _tween;
+        private Vector3 _originalTextScale = Vector3.one;
 
         /// <summary>字幕隐藏时触发（面板 SetActive(false) + 文字清空后）</summary>
         public event System.Action OnHidden;
@@ -32,6 +35,9 @@ namespace UI
 
             _player = manager.Player;
             Subscribe();
+
+            if (_subtitleText != null)
+                _originalTextScale = _subtitleText.rectTransform.localScale;
 
             if (_player.IsPlaying)
             {
@@ -113,12 +119,23 @@ namespace UI
 
         private void HidePanel()
         {
-            SetPanelActive(false);
+            _tween?.Kill();
 
-            if (_subtitleText != null)
-                _subtitleText.text = string.Empty;
+            if (_subtitleText == null)
+            {
+                _panel.SetActive(false);
+                OnHidden?.Invoke();
+                return;
+            }
 
-            OnHidden?.Invoke();
+            _tween = _subtitleText.rectTransform.DOScale(Vector3.zero, 0.2f)
+                .SetEase(Ease.InBack)
+                .OnComplete(() =>
+                {
+                    _panel.SetActive(false);
+                    _subtitleText.text = string.Empty;
+                    OnHidden?.Invoke();
+                });
         }
 
         /// <summary>
@@ -193,8 +210,24 @@ namespace UI
 
         private void SetPanelActive(bool active)
         {
-            if (_panel != null)
-                _panel.SetActive(active);
+            if (_panel == null) return;
+
+            _tween?.Kill();
+
+            if (active)
+            {
+                _panel.SetActive(true);
+
+                if (_subtitleText != null)
+                {
+                    _subtitleText.rectTransform.localScale = Vector3.zero;
+                    _tween = _subtitleText.rectTransform.DOScale(_originalTextScale, 0.35f).SetEase(Ease.OutBack);
+                }
+            }
+            else
+            {
+                _panel.SetActive(false);
+            }
         }
     }
 }

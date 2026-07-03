@@ -1,3 +1,4 @@
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,10 +30,13 @@ namespace UI
 
         private RectTransform _textRect;
         private string _currentText = string.Empty;
+        private Tween _tween;
+        private Vector3 _originalTextScale = Vector3.one;
 
         private void Awake()
         {
             ResolveReferences();
+            _originalTextScale = _subtitleText != null ? _subtitleText.rectTransform.localScale : Vector3.one;
             _currentText = _subtitleText != null ? _subtitleText.text : string.Empty;
             RefreshSize();
             ApplyVisibility();
@@ -160,8 +164,22 @@ namespace UI
 
         private void SetVisible(bool visible)
         {
-            if (_visibilityRoot != null && _visibilityRoot.activeSelf != visible)
-                _visibilityRoot.SetActive(visible);
+            if (_visibilityRoot == null || _subtitleText == null) return;
+
+            _tween?.Kill();
+
+            if (visible)
+            {
+                _subtitleText.rectTransform.localScale = Vector3.zero;
+                _visibilityRoot.SetActive(true);
+                _tween = _subtitleText.rectTransform.DOScale(_originalTextScale, 0.35f).SetEase(Ease.OutBack);
+            }
+            else
+            {
+                _tween = _subtitleText.rectTransform.DOScale(Vector3.zero, 0.2f)
+                    .SetEase(Ease.InBack)
+                    .OnComplete(() => _visibilityRoot.SetActive(false));
+            }
         }
 
         private static void SetRectSize(RectTransform rectTransform, float width, float height)

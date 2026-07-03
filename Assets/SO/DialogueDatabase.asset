@@ -235,8 +235,8 @@ MonoBehaviour:
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 3de65074367e63b42be0dfba8926bc8d, type: 3}
       emotion: hint
-  - id: level2_complete
-    description: "\u7B2C\u4E8C\u5173\u63A5\u7EBF\u5B8C\u6210\u5E76\u8FC7\u5173"
+  - id: level2_Winned
+    description: "\u7B2C\u4E8C\u5173\u80DC\u5229"
     lines:
     - lineType: 0
       speaker: 0
@@ -248,6 +248,9 @@ MonoBehaviour:
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 2ecfdb98fb39e274299dd40d5dc959b8, type: 3}
       emotion: pleased
+  - id: level2_Failed
+    description: "\u7B2C\u4E8C\u5173\u5931\u8D25"
+    lines:
     - lineType: 0
       speaker: 0
       zh: 
@@ -256,7 +259,7 @@ MonoBehaviour:
       waitAfter: 0.2
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 47dc29abd21d976498fabf0e0463fe4c, type: 3}
-      emotion: 
+      emotion: grateful
   - id: level3_muted
     description: "\u7B2C\u4E09\u5173\u5173\u6389\u58F0\u97F3\u540E\uFF0C\u4EC5\u5B57\u5E55"
     lines:

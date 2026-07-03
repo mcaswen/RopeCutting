@@ -2783,12 +2783,12 @@ MonoBehaviour:
   _resultScreen: {fileID: 76013836}
   _victoryResultDelay: 1
   _introDialogueId: 
-  _victoryDialogueId: 
-  _failureDialogueId: 
-  _victoryDialogueTextPosition: {fileID: 0}
-  _victoryDialogueTextColor: {r: 1, g: 1, b: 1, a: 1}
-  _failureDialogueTextPosition: {fileID: 0}
-  _failureDialogueTextColor: {r: 1, g: 1, b: 1, a: 1}
+  _victoryDialogueId: level2_Winned
+  _failureDialogueId: level2_Failed
+  _victoryDialogueTextPosition: {fileID: 23622810}
+  _victoryDialogueTextColor: {r: 0, g: 0, b: 0, a: 1}
+  _failureDialogueTextPosition: {fileID: 23622810}
+  _failureDialogueTextColor: {r: 0, g: 0, b: 0, a: 1}
   _dialogueEndToResultDelay: 0.5
   _playIntroOnStart: 1
   _onVictory:
@@ -2798,6 +2798,10 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _dog: {fileID: 0}
+  _dogLeashRope: {fileID: 6655387311186608789}
+  _dogLeashCutDialogueId: level2_dog_leash_cut
+  _powerCableRope: {fileID: 386453405}
+  _powerCutDialogueId: level2_power_cut
 --- !u!1 &1373164228
 GameObject:
   m_ObjectHideFlags: 0

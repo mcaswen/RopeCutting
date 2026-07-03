@@ -48,14 +48,20 @@ namespace Core
 
         protected virtual void Awake()
         {
+            if (_resultScreen == null)
+                ResolveResultScreen();
+
             if (_resultPanel != null)
                 _resultPanel.gameObject.SetActive(false);
+
+            if (_resultScreen != null)
+                _resultScreen.gameObject.SetActive(false);
         }
 
         protected virtual void OnEnable()
         {
             if (_character != null)
-                _character.OnCandyCollected.AddListener(CompleteVictory);
+                _character.OnCandyCollected.AddListener(HandleCandyCollected);
         }
 
         protected virtual void Start()
@@ -70,7 +76,12 @@ namespace Core
             UnlockPlayerInput();
 
             if (_character != null)
-                _character.OnCandyCollected.RemoveListener(CompleteVictory);
+                _character.OnCandyCollected.RemoveListener(HandleCandyCollected);
+        }
+
+        protected virtual void HandleCandyCollected()
+        {
+            CompleteVictory();
         }
 
         public void HandleFailureDetectorEnter(Collider2D other)
@@ -163,6 +174,15 @@ namespace Core
 
             _onFailure?.Invoke();
             Debug.Log("Failure!");
+        }
+
+        private void ResolveResultScreen()
+        {
+#if UNITY_2022_2_OR_NEWER
+            _resultScreen = FindFirstObjectByType<UI.ResultScreen>(FindObjectsInactive.Include);
+#else
+            _resultScreen = FindObjectOfType<UI.ResultScreen>(true);
+#endif
         }
 
         protected static bool IsColliderFromObject(Collider2D collider, GameObject target)

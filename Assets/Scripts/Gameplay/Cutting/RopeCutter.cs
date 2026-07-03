@@ -2,6 +2,7 @@ using UnityEngine;
 using Core;
 using Gameplay.Interaction;
 using Gameplay.Rope;
+using UnityEngine.EventSystems;
 
 namespace Gameplay.Cutting
 {
@@ -51,7 +52,8 @@ namespace Gameplay.Cutting
             // 鼠标输入（编辑器测试）
             if (Input.GetMouseButtonDown(0))
             {
-                if (InteractiveButton.IsPointerOverAny(Input.mousePosition, _mainCamera)
+                if (IsPointerOverUi()
+                    || InteractiveButton.IsPointerOverAny(Input.mousePosition, _mainCamera)
                     || UsbCablePlugInteraction.IsPointerOverAny(Input.mousePosition, _mainCamera)
                     || DraggableSettings.IsPointerOverAny(Input.mousePosition, _mainCamera))
                 {
@@ -85,7 +87,8 @@ namespace Gameplay.Cutting
 
                 if (touch.phase == TouchPhase.Began)
                 {
-                    if (InteractiveButton.IsPointerOverAny(touch.position, _mainCamera)
+                    if (IsPointerOverUi(touch.fingerId)
+                        || InteractiveButton.IsPointerOverAny(touch.position, _mainCamera)
                         || UsbCablePlugInteraction.IsPointerOverAny(touch.position, _mainCamera)
                         || DraggableSettings.IsPointerOverAny(touch.position, _mainCamera))
                     {
@@ -140,6 +143,16 @@ namespace Gameplay.Cutting
 #else
             _ropes = FindObjectsOfType<RopeController>();
 #endif
+        }
+
+        private static bool IsPointerOverUi(int pointerId = -1)
+        {
+            if (EventSystem.current == null)
+                return false;
+
+            return pointerId >= 0
+                ? EventSystem.current.IsPointerOverGameObject(pointerId)
+                : EventSystem.current.IsPointerOverGameObject();
         }
     }
 }

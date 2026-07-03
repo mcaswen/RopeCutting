@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using Core;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace Gameplay.Interaction
 {
-    /// <summary>
-    /// 2D 世界交互按钮/机关，支持点击、拖拽、点击旋转等常见关卡交互。
-    /// </summary>
     [RequireComponent(typeof(Collider2D))]
     public class InteractiveButton : MonoBehaviour
     {
@@ -16,7 +15,9 @@ namespace Gameplay.Interaction
         {
             Click,
             Drag,
-            Rotate90OnClick
+            Rotate90OnClick,
+            RestartCurrentLevelOnClick,
+            VolumeSliderOnClick
         }
 
         private static readonly List<InteractiveButton> Instances = new List<InteractiveButton>();
@@ -41,6 +42,15 @@ namespace Gameplay.Interaction
         [Header("Click")]
         [SerializeField] private float _clickMaxScreenDistance = 12f;
 
+        [Header("Volume Slider")]
+        [SerializeField] private Sprite _volumeButtonSprite;
+        [SerializeField] private RectTransform _volumeSliderRoot;
+        [SerializeField] private Slider _volumeSlider;
+        [SerializeField, Range(0f, 1f)] private float _defaultVolume = 1f;
+        [SerializeField] private bool _hideVolumeSliderOnStart = true;
+        [SerializeField] private bool _showVolumeSliderOnClick = true;
+        [SerializeField] private bool _setDefaultVolumeWhenOpened;
+
         [Header("Events")]
         [SerializeField] private UnityEvent _onPressed;
         [SerializeField] private UnityEvent _onClicked;
@@ -48,6 +58,7 @@ namespace Gameplay.Interaction
         [SerializeField] private UnityEvent _onDragEnded;
         [SerializeField] private UnityEvent _onRotated;
         [SerializeField] private UnityEvent _onReleased;
+        [SerializeField] private UnityEvent<float> _onVolumeChanged;
 
         private Collider2D _collider;
         private Rigidbody2D _targetRigidbody;
@@ -55,6 +66,7 @@ namespace Gameplay.Interaction
         private Vector2 _pressScreenPosition;
         private Vector3 _dragOffset;
         private bool _isDragging;
+        private bool _volumeSliderVisible;
 
         public static bool IsPointerCaptured => _capturedButton != null;
 
@@ -69,6 +81,9 @@ namespace Gameplay.Interaction
                 _target = transform;
 
             _targetRigidbody = _target.GetComponent<Rigidbody2D>();
+
+            if (_mode == InteractionMode.VolumeSliderOnClick)
+                SetupVolumeSlider();
         }
 
         private void OnEnable()
@@ -87,7 +102,8 @@ namespace Gameplay.Interaction
 
         private void Update()
         {
-            if (PlayerInputLock.IsLocked)
+            bool canIgnoreInputLock = _mode == InteractionMode.RestartCurrentLevelOnClick;
+            if (PlayerInputLock.IsLocked && !canIgnoreInputLock)
             {
                 if (_capturedButton == this)
                     ReleasePointer(false);
@@ -98,11 +114,8 @@ namespace Gameplay.Interaction
             if (_capturedButton != null && _capturedButton != this)
                 return;
 
-            if (TryGetPointerDown(out Vector2 screenPosition, out Vector3 worldPosition))
-            {
-                if (ContainsWorldPoint(worldPosition))
-                    CapturePointer(screenPosition, worldPosition);
-            }
+            if (TryGetPointerDown(out Vector2 screenPosition, out Vector3 worldPosition) && ContainsWorldPoint(worldPosition))
+                CapturePointer(screenPosition, worldPosition);
 
             if (_capturedButton != this)
                 return;
@@ -143,9 +156,20 @@ namespace Gameplay.Interaction
 
                 if (_mode == InteractionMode.Rotate90OnClick)
                     RotateByStep();
+                else if (_mode == InteractionMode.RestartCurrentLevelOnClick)
+                    RestartCurrentLevel();
+                else if (_mode == InteractionMode.VolumeSliderOnClick)
+                    ToggleVolumeSlider();
             }
 
             _onReleased?.Invoke();
+        }
+
+        private void RestartCurrentLevel()
+        {
+            PlayerInputLock.Clear();
+            Scene activeScene = SceneManager.GetActiveScene();
+            SceneManager.LoadScene(activeScene.buildIndex);
         }
 
         private void DragTo(Vector3 worldPosition)
@@ -167,13 +191,109 @@ namespace Gameplay.Interaction
             }
 
             if (_moveRigidbody && _targetRigidbody != null)
-            {
                 _targetRigidbody.MovePosition(nextPosition);
-            }
             else
-            {
                 _target.position = nextPosition;
+        }
+
+        private void SetupVolumeSlider()
+        {
+            ApplyVolumeButtonSprite();
+            BindVolumeSlider();
+
+            if (_volumeSliderRoot == null || _volumeSlider == null)
+                return;
+
+            SetVolumeSliderVisible(!_hideVolumeSliderOnStart);
+            SyncVolumeSliderToCurrentVolume();
+        }
+
+        private void ApplyVolumeButtonSprite()
+        {
+            if (_volumeButtonSprite == null)
+                return;
+
+            SpriteRenderer targetRenderer = Target.GetComponent<SpriteRenderer>();
+            if (targetRenderer == null)
+                targetRenderer = Target.GetComponentInChildren<SpriteRenderer>();
+
+            if (targetRenderer != null)
+                targetRenderer.sprite = _volumeButtonSprite;
+        }
+
+        private void BindVolumeSlider()
+        {
+            if (_volumeSliderRoot == null && _volumeSlider != null)
+                _volumeSliderRoot = _volumeSlider.transform as RectTransform;
+
+            if (_volumeSliderRoot == null)
+            {
+                Debug.LogWarning($"{name} needs a scene instance of P_VolumeSlider assigned to Volume Slider Root.", this);
+                return;
             }
+
+            if (_volumeSlider == null)
+                _volumeSlider = _volumeSliderRoot.GetComponent<Slider>();
+
+            if (_volumeSlider == null)
+            {
+                Debug.LogWarning($"{name} needs a Slider component on the assigned volume slider root.", this);
+                return;
+            }
+
+            _volumeSlider.minValue = 0f;
+            _volumeSlider.maxValue = 1f;
+            _volumeSlider.wholeNumbers = false;
+            _volumeSlider.onValueChanged.RemoveListener(HandleVolumeSliderValueChanged);
+            _volumeSlider.onValueChanged.AddListener(HandleVolumeSliderValueChanged);
+        }
+
+        private void ToggleVolumeSlider()
+        {
+            if (!_showVolumeSliderOnClick)
+                return;
+
+            SetVolumeSliderVisible(!_volumeSliderVisible);
+
+            if (!_volumeSliderVisible)
+                return;
+
+            if (_setDefaultVolumeWhenOpened)
+                SetGameVolume(_defaultVolume);
+            else
+                SyncVolumeSliderToCurrentVolume();
+        }
+
+        private void SetVolumeSliderVisible(bool visible)
+        {
+            _volumeSliderVisible = visible;
+
+            if (_volumeSliderRoot == null)
+                return;
+
+            _volumeSliderRoot.gameObject.SetActive(visible);
+        }
+
+        private void SetGameVolume(float volume)
+        {
+            volume = Mathf.Clamp01(volume);
+            AudioListener.volume = volume;
+
+            if (_volumeSlider != null)
+                _volumeSlider.SetValueWithoutNotify(volume);
+
+            _onVolumeChanged?.Invoke(volume);
+        }
+
+        private void SyncVolumeSliderToCurrentVolume()
+        {
+            if (_volumeSlider != null)
+                _volumeSlider.SetValueWithoutNotify(Mathf.Clamp01(AudioListener.volume));
+        }
+
+        private void HandleVolumeSliderValueChanged(float volume)
+        {
+            SetGameVolume(volume);
         }
 
         private void RotateByStep()
@@ -324,6 +444,7 @@ namespace Gameplay.Interaction
         public UnityEvent OnDragEnded => _onDragEnded;
         public UnityEvent OnRotated => _onRotated;
         public UnityEvent OnReleased => _onReleased;
+        public UnityEvent<float> OnVolumeChanged => _onVolumeChanged;
 
         public Transform Target => _target != null ? _target : transform;
         public float CurrentLocalZAngle => Mathf.Repeat(Target.localEulerAngles.z, 360f);

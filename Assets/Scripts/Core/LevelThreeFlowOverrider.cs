@@ -26,9 +26,14 @@ namespace Core
         [SerializeField] private AnimationCurve _endingCameraMoveCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
         [SerializeField] private LevelThreeEndingFlow _endingFlow;
 
+        [Header("Level 3 - Victory Condition")]
+        [SerializeField] private RopeController[] _victoryRopes;
+
         private bool _networkDisconnected;
         private bool _candyCollected;
         private bool _endingTransitionStarted;
+        private bool _victoryConditionMet;
+        private int _victoryRopesCutCount;
         private Coroutine _endingTransitionRoutine;
 
         protected override void Awake()
@@ -55,6 +60,8 @@ namespace Core
 
             if (_flyingCharacter != null)
                 _flyingCharacter.Disappearing += HandleFlyingCharacterDisappearing;
+
+            RegisterVictoryRopes();
         }
 
         protected override void OnDisable()
@@ -67,6 +74,8 @@ namespace Core
 
             if (_flyingCharacter != null)
                 _flyingCharacter.Disappearing -= HandleFlyingCharacterDisappearing;
+
+            UnregisterVictoryRopes();
 
             if (_endingTransitionRoutine != null)
             {
@@ -90,7 +99,7 @@ namespace Core
             if (!IsPlaying)
                 return;
 
-            if (!_candyCollected)
+            if (!_victoryConditionMet)
             {
                 CompleteFailure();
                 return;
@@ -214,6 +223,42 @@ namespace Core
             }
 
             cameraTransform.SetPositionAndRotation(targetPosition, targetRotation);
+        }
+
+        private void RegisterVictoryRopes()
+        {
+            if (_victoryRopes == null)
+                return;
+
+            for (int i = 0; i < _victoryRopes.Length; i++)
+            {
+                if (_victoryRopes[i] != null)
+                    _victoryRopes[i].OnCut += HandleVictoryRopeCut;
+            }
+        }
+
+        private void UnregisterVictoryRopes()
+        {
+            if (_victoryRopes == null)
+                return;
+
+            for (int i = 0; i < _victoryRopes.Length; i++)
+            {
+                if (_victoryRopes[i] != null)
+                    _victoryRopes[i].OnCut -= HandleVictoryRopeCut;
+            }
+        }
+
+        private void HandleVictoryRopeCut(RopeController rope)
+        {
+            if (!IsPlaying || _victoryConditionMet)
+                return;
+
+            _victoryRopesCutCount++;
+            if (_victoryRopesCutCount >= _victoryRopes.Length)
+            {
+                _victoryConditionMet = true;
+            }
         }
 
         private void ResolveReferences()

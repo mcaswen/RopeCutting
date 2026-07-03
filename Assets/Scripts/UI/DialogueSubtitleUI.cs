@@ -16,6 +16,9 @@ namespace UI
         private DialoguePlayer _player;
         private bool _subscribed;
 
+        /// <summary>字幕隐藏时触发（面板 SetActive(false) + 文字清空后）</summary>
+        public event System.Action OnHidden;
+
         // 字幕外观覆写
         private Vector2 _originalAnchoredPosition;
         private Color _originalColor;
@@ -114,6 +117,8 @@ namespace UI
 
             if (_subtitleText != null)
                 _subtitleText.text = string.Empty;
+
+            OnHidden?.Invoke();
         }
 
         /// <summary>
@@ -133,6 +138,25 @@ namespace UI
                     Subscribe();
                 }
             }
+        }
+
+        /// <summary>
+        /// 外部调用：用 RectTransform 指定字幕文本位置 + 颜色
+        /// </summary>
+        public void SetSubtitleOverrides(RectTransform positionAnchor, Color color)
+        {
+            if (_subtitleText == null || positionAnchor == null)
+                return;
+
+            if (!_hasSavedOriginal)
+            {
+                _originalAnchoredPosition = _subtitleText.rectTransform.anchoredPosition;
+                _originalColor = _subtitleText.color;
+                _hasSavedOriginal = true;
+            }
+
+            _subtitleText.rectTransform.anchoredPosition = positionAnchor.anchoredPosition;
+            _subtitleText.color = color;
         }
 
         /// <summary>

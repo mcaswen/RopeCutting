@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Gameplay.Character;
 using Gameplay.Collectible;
 using Systems;
@@ -31,6 +32,11 @@ namespace Core
         [SerializeField] private string _introDialogueId;
         [SerializeField] private string _victoryDialogueId;
         [SerializeField] private string _failureDialogueId;
+        [SerializeField] private RectTransform _victoryDialogueTextPosition;
+        [SerializeField] private Color _victoryDialogueTextColor = Color.white;
+        [SerializeField] private RectTransform _failureDialogueTextPosition;
+        [SerializeField] private Color _failureDialogueTextColor = Color.white;
+        [SerializeField, Min(0f)] private float _dialogueEndToResultDelay = 0.5f;
         [SerializeField] private bool _playIntroOnStart = true;
 
         [Header("Events")]
@@ -40,6 +46,7 @@ namespace Core
         private LevelState _state = LevelState.Playing;
         private Coroutine _victoryResultRoutine;
         private bool _lockedPlayerInput;
+        private static readonly HashSet<string> _introPlayedScenes = new HashSet<string>();
 
         public LevelState State => _state;
         public bool IsPlaying => _state == LevelState.Playing;
@@ -67,7 +74,14 @@ namespace Core
         protected virtual void Start()
         {
             if (_playIntroOnStart && !string.IsNullOrWhiteSpace(_introDialogueId))
-                DialogueManager.Instance?.Play(_introDialogueId);
+            {
+                string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+                if (!_introPlayedScenes.Contains(sceneName))
+                {
+                    _introPlayedScenes.Add(sceneName);
+                    DialogueManager.Instance?.Play(_introDialogueId);
+                }
+            }
         }
 
         protected virtual void OnDisable()
@@ -139,12 +153,36 @@ namespace Core
 
         private void ShowVictoryResult()
         {
-            SfxPlayer.Play(SfxId.Win);
-
             if (!string.IsNullOrWhiteSpace(_victoryDialogueId))
             {
                 // 先播胜利对话，播完再显示结算
-                DialogueManager.Instance?.Play(_victoryDialogueId, ShowVictoryUI);
+                var subtitleUI = FindObjectOfType<DialogueSubtitleUI>(true);
+                if (subtitleUI != null && _victoryDialogueTextPosition != null)
+                {
+                    subtitleUI.EnsureActive();
+                    subtitleUI.SetSubtitleOverrides(_victoryDialogueTextPosition, _victoryDialogueTextColor);
+                }
+
+                DialogueManager.Instance?.Play(_victoryDialogueId, () =>
+                {
+                    if (subtitleUI != null)
+                        subtitleUI.ClearSubtitleOverrides();
+
+                    if (subtitleUI != null)
+                    {
+                        System.Action handler = null;
+                        handler = () =>
+                        {
+                            subtitleUI.OnHidden -= handler;
+                            StartCoroutine(DelayedShowResult(ShowVictoryUI));
+                        };
+                        subtitleUI.OnHidden += handler;
+                    }
+                    else
+                    {
+                        StartCoroutine(DelayedShowResult(ShowVictoryUI));
+                    }
+                });
                 return;
             }
 
@@ -153,6 +191,8 @@ namespace Core
 
         private void ShowVictoryUI()
         {
+            SfxPlayer.Play(SfxId.Win);
+
             if (_resultScreen != null)
                 _resultScreen.ShowVictory();
             else if (_resultPanel != null)
@@ -165,6 +205,44 @@ namespace Core
         protected virtual void OnFailure()
         {
             CancelVictoryResultRoutine();
+
+            if (!string.IsNullOrWhiteSpace(_failureDialogueId))
+            {
+                var subtitleUI = FindObjectOfType<DialogueSubtitleUI>(true);
+                if (subtitleUI != null && _failureDialogueTextPosition != null)
+                {
+                    subtitleUI.EnsureActive();
+                    subtitleUI.SetSubtitleOverrides(_failureDialogueTextPosition, _failureDialogueTextColor);
+                }
+
+                DialogueManager.Instance?.Play(_failureDialogueId, () =>
+                {
+                    if (subtitleUI != null)
+                        subtitleUI.ClearSubtitleOverrides();
+
+                    if (subtitleUI != null)
+                    {
+                        System.Action handler = null;
+                        handler = () =>
+                        {
+                            subtitleUI.OnHidden -= handler;
+                            StartCoroutine(DelayedShowResult(ShowFailureUI));
+                        };
+                        subtitleUI.OnHidden += handler;
+                    }
+                    else
+                    {
+                        StartCoroutine(DelayedShowResult(ShowFailureUI));
+                    }
+                });
+                return;
+            }
+
+            ShowFailureUI();
+        }
+
+        private void ShowFailureUI()
+        {
             SfxPlayer.Play(SfxId.Lose);
 
             if (_resultScreen != null)
@@ -174,6 +252,12 @@ namespace Core
 
             _onFailure?.Invoke();
             Debug.Log("Failure!");
+        }
+
+        private IEnumerator DelayedShowResult(System.Action showResult)
+        {
+            yield return new WaitForSeconds(_dialogueEndToResultDelay);
+            showResult?.Invoke();
         }
 
         private void ResolveResultScreen()

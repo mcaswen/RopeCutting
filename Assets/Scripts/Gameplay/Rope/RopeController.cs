@@ -68,6 +68,8 @@ namespace Gameplay.Rope
         private LineRenderer _lineRenderer;
         private readonly List<RopeChain> _chains = new List<RopeChain>();
 
+        public event System.Action<RopeController> OnCut;
+
         private class RopeChain
         {
             public Transform StartAnchorPoint;
@@ -547,6 +549,7 @@ namespace Gameplay.Rope
 
             NotifyAnchorsCut(chain, hitPoint);
             OnRopeCut(hitPoint, GetRemainingUncutChainCount());
+            OnCut?.Invoke(this);
 
             // 下半段节点构建为 RopeSegment（含 LineRenderer）
             List<GameObject> lowerNodes = new List<GameObject>();

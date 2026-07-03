@@ -24,7 +24,7 @@ namespace Core
 
         [Header("Level 1 Lamp Dialogue (replaces failure)")]
         [SerializeField] private string _lampCutDialogueId = "level1_light_cut";
-        [SerializeField] private Vector2 _lampCutTextPosition = new Vector2(0, -200);
+        [SerializeField] private RectTransform _lampCutTextPositionAnchor;
         [SerializeField] private Color _lampCutTextColor = Color.white;
 
         [Header("Level 1 Volume Restore")]
@@ -238,7 +238,10 @@ namespace Core
             if (subtitleUI != null)
             {
                 subtitleUI.EnsureActive();
-                subtitleUI.SetSubtitleOverrides(_lampCutTextPosition, _lampCutTextColor);
+                if (_lampCutTextPositionAnchor != null)
+                    subtitleUI.SetSubtitleOverrides(_lampCutTextPositionAnchor, _lampCutTextColor);
+                else
+                    subtitleUI.SetSubtitleOverrides(Vector2.zero, _lampCutTextColor);
             }
 
             DialogueManager.Instance?.Play(_lampCutDialogueId, OnLampCutDialogueCompleted);

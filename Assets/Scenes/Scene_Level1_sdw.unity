@@ -976,19 +976,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3554527465026202814, guid: fe814c3a5441b704aa9c5e15158d1ecd, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 6600287900928694932, guid: fe814c3a5441b704aa9c5e15158d1ecd, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 4922563338236793188, guid: fe814c3a5441b704aa9c5e15158d1ecd, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 885860222086322318, guid: fe814c3a5441b704aa9c5e15158d1ecd, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fe814c3a5441b704aa9c5e15158d1ecd, type: 3}
 --- !u!1 &503889279
 GameObject:
@@ -3599,10 +3587,15 @@ MonoBehaviour:
   _candy: {fileID: 1865679799}
   _resultPanel: {fileID: 736130707}
   _resultScreen: {fileID: 307999546}
-  _victoryResultDelay: 1
+  _victoryResultDelay: 0
   _introDialogueId: 
-  _victoryDialogueId: 
-  _failureDialogueId: 
+  _victoryDialogueId: level1_Winned
+  _failureDialogueId: level1_Failed
+  _victoryDialogueTextPosition: {fileID: 182213781}
+  _victoryDialogueTextColor: {r: 0, g: 0, b: 0, a: 1}
+  _failureDialogueTextPosition: {fileID: 182213781}
+  _failureDialogueTextColor: {r: 0, g: 0, b: 0, a: 1}
+  _dialogueEndToResultDelay: 0.5
   _playIntroOnStart: 1
   _onVictory:
     m_PersistentCalls:
@@ -3620,7 +3613,7 @@ MonoBehaviour:
   _blackScreenEndAlpha: 1
   _logLampFailureChecks: 1
   _lampCutDialogueId: level1_light_cut
-  _lampCutTextPosition: {x: 0, y: 0}
+  _lampCutTextPositionAnchor: {fileID: 0}
   _lampCutTextColor: {r: 1, g: 1, b: 1, a: 1}
   _volumeButtonRestoredSprite: {fileID: -835003503, guid: ce831bf5cadd7404388ad7135c95f48e, type: 3}
 --- !u!1 &1865679796

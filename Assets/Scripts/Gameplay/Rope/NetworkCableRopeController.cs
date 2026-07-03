@@ -16,6 +16,9 @@ namespace Gameplay.Rope
 
         private bool _hasTriggered;
 
+        public event UnityAction<Vector3> NetworkCableCut;
+        public UnityEvent OnGlitchStarted => _onGlitchStarted;
+
         protected override void OnRopeCut(Vector3 hitPoint, int remainingUncutChainCount)
         {
             if (_hasTriggered) return;
@@ -28,6 +31,7 @@ namespace Gameplay.Rope
                 effect.Play(_glitchDuration, _glitchStrength);
 
             SfxPlayer.Play(SfxId.ShortCircuit);
+            NetworkCableCut?.Invoke(hitPoint);
             _onGlitchStarted?.Invoke();
         }
 

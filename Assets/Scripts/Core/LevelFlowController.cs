@@ -44,7 +44,7 @@ namespace Core
         protected virtual void OnEnable()
         {
             if (_character != null)
-                _character.OnCandyCollected.AddListener(CompleteVictory);
+                _character.OnCandyCollected.AddListener(HandleCandyCollected);
         }
 
         protected virtual void OnDisable()
@@ -53,7 +53,12 @@ namespace Core
             UnlockPlayerInput();
 
             if (_character != null)
-                _character.OnCandyCollected.RemoveListener(CompleteVictory);
+                _character.OnCandyCollected.RemoveListener(HandleCandyCollected);
+        }
+
+        protected virtual void HandleCandyCollected()
+        {
+            CompleteVictory();
         }
 
         public void HandleFailureDetectorEnter(Collider2D other)

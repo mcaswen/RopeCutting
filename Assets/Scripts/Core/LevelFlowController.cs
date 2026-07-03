@@ -20,6 +20,10 @@ namespace Core
         [SerializeField] private Character _character;
         [SerializeField] private Candy _candy;
         [SerializeField] private ResultPanel _resultPanel;
+
+        [Header("World Space Result (optional)")]
+        [SerializeField] private UI.ResultScreen _resultScreen;
+
         [SerializeField, Min(0f)] private float _victoryResultDelay = 1f;
 
         [Header("Events")]
@@ -113,7 +117,9 @@ namespace Core
         {
             SfxPlayer.Play(SfxId.Win);
 
-            if (_resultPanel != null)
+            if (_resultScreen != null)
+                _resultScreen.ShowVictory();
+            else if (_resultPanel != null)
                 _resultPanel.ShowVictory();
 
             _onVictory?.Invoke();
@@ -125,7 +131,9 @@ namespace Core
             CancelVictoryResultRoutine();
             SfxPlayer.Play(SfxId.Lose);
 
-            if (_resultPanel != null)
+            if (_resultScreen != null)
+                _resultScreen.ShowFailure();
+            else if (_resultPanel != null)
                 _resultPanel.ShowFailure();
 
             _onFailure?.Invoke();

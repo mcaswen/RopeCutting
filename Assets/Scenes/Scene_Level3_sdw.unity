@@ -344,11 +344,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 786058539834651336, guid: d927cac1ced5f08458f1f323d80dd7d4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.23
+      value: 6.06
       objectReference: {fileID: 0}
     - target: {fileID: 786058539834651336, guid: d927cac1ced5f08458f1f323d80dd7d4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.1
+      value: 6.89
       objectReference: {fileID: 0}
     - target: {fileID: 786058539834651336, guid: d927cac1ced5f08458f1f323d80dd7d4, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1055,6 +1055,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _resultText: {fileID: 2076012890}
   _restartButton: {fileID: 533968262}
+  _nextLevelButton: {fileID: 0}
+  _nextLevelSceneName: Scene_Level2_wanyun
   _failureMessage: Failed
   _victoryMessage: Win!!
   _defeatMessage: "\u5931\u8D25\uFF01"

@@ -625,6 +625,179 @@ Transform:
   - {fileID: 1164124838}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &347052842
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 347052843}
+  - component: {fileID: 347052846}
+  - component: {fileID: 347052845}
+  - component: {fileID: 347052844}
+  m_Layer: 0
+  m_Name: Start
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &347052843
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 347052842}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.86, y: -0.08, z: -0.07381716}
+  m_LocalScale: {x: 0.19746727, y: 0.20324998, z: 1.7108586}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2134848340}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &347052844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 347052842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c06762f47fdc42888b3576d099769731, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _mode: 3
+  _mainCamera: {fileID: 0}
+  _target: {fileID: 347052843}
+  _dragX: 1
+  _dragY: 1
+  _useDragBounds: 0
+  _dragMin: {x: -5, y: -5}
+  _dragMax: {x: 5, y: 5}
+  _moveRigidbody: 1
+  _rotationStep: 90
+  _rotationDuration: 0.15
+  _clickMaxScreenDistance: 12
+  _volumeButtonSprite: {fileID: 0}
+  _volumeSliderRoot: {fileID: 0}
+  _volumeSlider: {fileID: 0}
+  _defaultVolume: 1
+  _hideVolumeSliderOnStart: 1
+  _showVolumeSliderOnClick: 1
+  _setDefaultVolumeWhenOpened: 0
+  _onPressed:
+    m_PersistentCalls:
+      m_Calls: []
+  _onClicked:
+    m_PersistentCalls:
+      m_Calls: []
+  _onDragStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  _onDragEnded:
+    m_PersistentCalls:
+      m_Calls: []
+  _onRotated:
+    m_PersistentCalls:
+      m_Calls: []
+  _onReleased:
+    m_PersistentCalls:
+      m_Calls: []
+  _onVolumeChanged:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!58 &347052845
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 347052842}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.26262492, y: 0.46689034}
+  serializedVersion: 2
+  m_Radius: 3.082459
+--- !u!212 &347052846
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 347052842}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 21300000, guid: e0168fc6b3afbd64bb43f56606fc660c, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
 --- !u!1 &385567208
 GameObject:
   m_ObjectHideFlags: 0
@@ -762,6 +935,10 @@ MonoBehaviour:
   _springRestLengthRatio: 1
   _springFrequency: 5
   _springDampingRatio: 0.3
+  _visualStyle: 0
+  _springTurnsPerSegment: 1
+  _springSamplesPerTurn: 8
+  _springAmplitude: 0.12
   _cutFadeDelay: 0.15
   _cutFadeDuration: 0.4
   _indestructible: 0
@@ -1688,6 +1865,13 @@ MonoBehaviour:
   _rotationStep: -90
   _rotationDuration: 0.15
   _clickMaxScreenDistance: 12
+  _volumeButtonSprite: {fileID: 0}
+  _volumeSliderRoot: {fileID: 0}
+  _volumeSlider: {fileID: 0}
+  _defaultVolume: 1
+  _hideVolumeSliderOnStart: 1
+  _showVolumeSliderOnClick: 1
+  _setDefaultVolumeWhenOpened: 0
   _onPressed:
     m_PersistentCalls:
       m_Calls: []
@@ -1704,6 +1888,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _onReleased:
+    m_PersistentCalls:
+      m_Calls: []
+  _onVolumeChanged:
     m_PersistentCalls:
       m_Calls: []
 --- !u!61 &1123265212
@@ -1863,6 +2050,10 @@ MonoBehaviour:
   _springRestLengthRatio: 1
   _springFrequency: 5
   _springDampingRatio: 0.3
+  _visualStyle: 0
+  _springTurnsPerSegment: 1
+  _springSamplesPerTurn: 8
+  _springAmplitude: 0.12
   _cutFadeDelay: 0.15
   _cutFadeDuration: 0.4
   _indestructible: 0
@@ -2299,6 +2490,10 @@ MonoBehaviour:
   _resultPanel: {fileID: 922453971}
   _resultScreen: {fileID: 76013836}
   _victoryResultDelay: 1
+  _introDialogueId: 
+  _victoryDialogueId: 
+  _failureDialogueId: 
+  _playIntroOnStart: 1
   _onVictory:
     m_PersistentCalls:
       m_Calls: []
@@ -2503,7 +2698,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1416798803
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2900,6 +3095,10 @@ MonoBehaviour:
   _springRestLengthRatio: 1
   _springFrequency: 5
   _springDampingRatio: 0.3
+  _visualStyle: 0
+  _springTurnsPerSegment: 1
+  _springSamplesPerTurn: 8
+  _springAmplitude: 0.12
   _cutFadeDelay: 0.15
   _cutFadeDuration: 0.4
   _indestructible: 1
@@ -3519,6 +3718,7 @@ Transform:
   - {fileID: 1123265210}
   - {fileID: 1014017539}
   - {fileID: 881690508}
+  - {fileID: 347052843}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &199509282426731867
@@ -3576,7 +3776,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3554527465026202814, guid: fe814c3a5441b704aa9c5e15158d1ecd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: fe814c3a5441b704aa9c5e15158d1ecd, type: 3}
 --- !u!50 &632992474194330146
 Rigidbody2D:
@@ -4331,6 +4534,10 @@ MonoBehaviour:
   _springRestLengthRatio: 1
   _springFrequency: 5
   _springDampingRatio: 0.3
+  _visualStyle: 0
+  _springTurnsPerSegment: 1
+  _springSamplesPerTurn: 8
+  _springAmplitude: 0.12
   _cutFadeDelay: 0.15
   _cutFadeDuration: 0.4
   _indestructible: 0
@@ -4361,6 +4568,10 @@ MonoBehaviour:
   _springRestLengthRatio: 1
   _springFrequency: 5
   _springDampingRatio: 0.3
+  _visualStyle: 0
+  _springTurnsPerSegment: 1
+  _springSamplesPerTurn: 8
+  _springAmplitude: 0.12
   _cutFadeDelay: 0.15
   _cutFadeDuration: 0.4
   _indestructible: 0
@@ -4391,6 +4602,10 @@ MonoBehaviour:
   _springRestLengthRatio: 1
   _springFrequency: 5
   _springDampingRatio: 0.3
+  _visualStyle: 0
+  _springTurnsPerSegment: 1
+  _springSamplesPerTurn: 8
+  _springAmplitude: 0.12
   _cutFadeDelay: 0.15
   _cutFadeDuration: 0.4
   _indestructible: 1
@@ -4421,6 +4636,10 @@ MonoBehaviour:
   _springRestLengthRatio: 0.2
   _springFrequency: 5
   _springDampingRatio: 0.02
+  _visualStyle: 0
+  _springTurnsPerSegment: 1
+  _springSamplesPerTurn: 8
+  _springAmplitude: 0.12
   _cutFadeDelay: 0.15
   _cutFadeDuration: 0.4
   _indestructible: 0

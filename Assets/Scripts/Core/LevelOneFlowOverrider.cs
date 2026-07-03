@@ -2,6 +2,8 @@ using System.Collections;
 using Gameplay.Interaction;
 using Gameplay.Rope;
 using Systems;
+using Systems.Dialogue;
+using UI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,6 +21,14 @@ namespace Core
         [SerializeField, Range(0f, 1f)] private float _blackScreenStartAlpha = 0f;
         [SerializeField, Range(0f, 1f)] private float _blackScreenEndAlpha = 1f;
         [SerializeField] private bool _logLampFailureChecks = true;
+
+        [Header("Level 1 Lamp Dialogue (replaces failure)")]
+        [SerializeField] private string _lampCutDialogueId = "level1_light_cut";
+        [SerializeField] private Vector2 _lampCutTextPosition = new Vector2(0, -200);
+        [SerializeField] private Color _lampCutTextColor = Color.white;
+
+        [Header("Level 1 Volume Restore")]
+        [SerializeField] private Sprite _volumeButtonRestoredSprite;
 
         private RopeConnectable _lampConnectable;
         private CanvasGroup _blackScreenCanvasGroup;
@@ -118,6 +128,41 @@ namespace Core
         private void HandleVolumeButtonRotated()
         {
             UpdateLampFailureCancelState(true);
+
+            // 旋钮回到0度时：换贴图 + 移除黑屏
+            if (_volumeButton != null && _volumeButton.IsAtLocalZAngle(0f, _rotationTolerance))
+                RestoreVolumeButton();
+        }
+
+        private void RestoreVolumeButton()
+        {
+            ApplyVolumeButtonRestoredSprite();
+            HideBlackScreen();
+        }
+
+        private void ApplyVolumeButtonRestoredSprite()
+        {
+            if (_volumeButtonRestoredSprite == null)
+                return;
+
+            SpriteRenderer renderer = _volumeButton.Target.GetComponentInChildren<SpriteRenderer>();
+            if (renderer != null)
+                renderer.sprite = _volumeButtonRestoredSprite;
+        }
+
+        private void HideBlackScreen()
+        {
+            if (_blackScreen == null)
+                return;
+
+            if (_lampFailureRoutine != null)
+            {
+                StopCoroutine(_lampFailureRoutine);
+                _lampFailureRoutine = null;
+            }
+
+            _blackScreen.SetActive(false);
+            SetBlackScreenAlpha(_blackScreenStartAlpha);
         }
 
         private void UpdateLampFailureCancelState(bool playDing)
@@ -177,7 +222,35 @@ namespace Core
 
             SetBlackScreenAlpha(_blackScreenEndAlpha);
             _lampFailureRoutine = null;
-            CompleteFailure();
+            PlayLampCutDialogue();
+        }
+
+        private void PlayLampCutDialogue()
+        {
+            if (string.IsNullOrWhiteSpace(_lampCutDialogueId))
+            {
+                UnlockPlayerInput();
+                return;
+            }
+
+            // 可能已被 SetPanelActive(false) 失活，需要 include inactive 才能找到
+            var subtitleUI = FindObjectOfType<DialogueSubtitleUI>(true);
+            if (subtitleUI != null)
+            {
+                subtitleUI.EnsureActive();
+                subtitleUI.SetSubtitleOverrides(_lampCutTextPosition, _lampCutTextColor);
+            }
+
+            DialogueManager.Instance?.Play(_lampCutDialogueId, OnLampCutDialogueCompleted);
+        }
+
+        private void OnLampCutDialogueCompleted()
+        {
+            var subtitleUI = FindObjectOfType<DialogueSubtitleUI>(true);
+            if (subtitleUI != null)
+                subtitleUI.ClearSubtitleOverrides();
+
+            UnlockPlayerInput();
         }
 
         private void ResolveLampConnectable()

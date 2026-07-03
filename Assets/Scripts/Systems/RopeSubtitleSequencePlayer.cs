@@ -4,6 +4,7 @@ using Gameplay.Rope;
 using UI;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace Systems.Dialogue
 {
@@ -24,13 +25,18 @@ namespace Systems.Dialogue
         [SerializeField] private Transform _subtitleParent;
         [SerializeField] private Transform _ropeParent;
 
-        [Header("Positions")]
+        [Header("Shared Positions")]
         [SerializeField] private Transform _spawnPoint;
         [SerializeField] private Transform _connectAnchorPoint;
-        [SerializeField] private Transform _settlePoint;
         [SerializeField] private Vector3 _spawnPosition;
         [SerializeField] private Vector3 _connectAnchorPosition;
-        [SerializeField] private Vector3 _settlePosition;
+
+        [Header("Per-Subtitle Settle Points")]
+        [FormerlySerializedAs("_settlePoint")]
+        [SerializeField] private Transform _defaultSettlePoint;
+        [FormerlySerializedAs("_settlePosition")]
+        [SerializeField] private Vector3 _defaultSettlePosition;
+        [SerializeField] private SubtitleSettleTarget[] _settleTargets = new SubtitleSettleTarget[0];
 
         [Header("Fall")]
         [SerializeField] private Vector2 _initialVelocity;
@@ -70,6 +76,15 @@ namespace Systems.Dialogue
         private Coroutine _sequenceRoutine;
         private Coroutine _settleRoutine;
         private ActiveSubtitle _activeSubtitle;
+
+        [Serializable]
+#pragma warning disable 0649
+        private struct SubtitleSettleTarget
+        {
+            public Transform Point;
+            public Vector3 Position;
+        }
+#pragma warning restore 0649
 
         private sealed class ActiveSubtitle
         {
@@ -162,6 +177,7 @@ namespace Systems.Dialogue
         {
             _onSequenceStarted?.Invoke(sequence.id);
 
+            int subtitleIndex = 0;
             for (int i = 0; i < sequence.lines.Count; i++)
             {
                 DialogueLine line = sequence.lines[i];
@@ -188,6 +204,9 @@ namespace Systems.Dialogue
                 if (subtitle == null)
                     yield break;
 
+                Vector3 settlePosition = ResolveSettlePosition(subtitleIndex);
+                subtitleIndex++;
+
                 _onLineStarted?.Invoke(i + 1);
 
                 yield return WaitUntilConnectPoint(subtitle);
@@ -196,12 +215,12 @@ namespace Systems.Dialogue
 
                 subtitle.RopeRoot = CreateRopeInstance(subtitle.Connectable);
 
-                yield return WaitUntilSettlePoint(subtitle);
+                yield return WaitUntilSettlePoint(subtitle, settlePosition);
                 if (!subtitle.IsAlive)
                     continue;
 
                 bool settleComplete = false;
-                _settleRoutine = StartCoroutine(SettleSubtitle(subtitle, () => settleComplete = true));
+                _settleRoutine = StartCoroutine(SettleSubtitle(subtitle, settlePosition, () => settleComplete = true));
 
                 bool voiceStarted = PlayVoice(line.voiceClip);
                 yield return WaitForVoiceAndSettle(voiceStarted, () => settleComplete);
@@ -282,10 +301,8 @@ namespace Systems.Dialogue
             }
         }
 
-        private IEnumerator WaitUntilSettlePoint(ActiveSubtitle subtitle)
+        private IEnumerator WaitUntilSettlePoint(ActiveSubtitle subtitle, Vector3 settlePosition)
         {
-            Vector3 settlePosition = ResolvePoint(_settlePoint, _settlePosition);
-
             float elapsed = 0f;
             while (subtitle.IsAlive && elapsed < _maxFallSeconds)
             {
@@ -298,7 +315,7 @@ namespace Systems.Dialogue
             }
         }
 
-        private IEnumerator SettleSubtitle(ActiveSubtitle subtitle, Action completed)
+        private IEnumerator SettleSubtitle(ActiveSubtitle subtitle, Vector3 settlePosition, Action completed)
         {
             if (!subtitle.IsAlive)
             {
@@ -308,7 +325,6 @@ namespace Systems.Dialogue
 
             RopeSubtitleBubble bubble = subtitle.Connectable;
             Vector3 startPosition = bubble.transform.position;
-            Vector3 settlePosition = ResolvePoint(_settlePoint, _settlePosition);
 
             Rigidbody2D body = bubble.Rigidbody;
             if (body != null)
@@ -488,6 +504,14 @@ namespace Systems.Dialogue
         private Vector3 ResolvePoint(Transform point, Vector3 fallback)
         {
             return point != null ? point.position : fallback;
+        }
+
+        private Vector3 ResolveSettlePosition(int subtitleIndex)
+        {
+            if (_settleTargets != null && subtitleIndex >= 0 && subtitleIndex < _settleTargets.Length)
+                return ResolvePoint(_settleTargets[subtitleIndex].Point, _settleTargets[subtitleIndex].Position);
+
+            return ResolvePoint(_defaultSettlePoint, _defaultSettlePosition);
         }
 
         private float DeltaTime => _useUnscaledTime ? Time.unscaledDeltaTime : Time.deltaTime;

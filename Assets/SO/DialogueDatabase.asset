@@ -13,461 +13,453 @@ MonoBehaviour:
   m_Name: DialogueDatabase
   m_EditorClassIdentifier: 
   sequences:
-  - id: start_intro
-    description: "\u5F00\u59CB\u754C\u9762\u5F00\u573A"
+  - id: "start_intro"
+    description: "开始界面开场"
     lines:
     - lineType: 0
       speaker: 0
-      zh: "\u6B22\u8FCE\u6765\u5230\u300A\u53EA\u662F\u5272\u7EF3\u5B50\u300B\uFF01"
-      en: Welcome to Just Cut The Rope !
+      zh: "欢迎来到《只是割绳子》！"
+      en: "Welcome to Just Cut The Rope ！"
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 83dc91a0c62cf9642b2f18a4bec6385b, type: 3}
-      emotion: 
+      emotion: ""
     - lineType: 0
       speaker: 0
-      zh: "\u6E38\u620F\u89C4\u5219\u975E\u5E38\u7B80\u5355\u3002"
-      en: The rules are pretty simple.
+      zh: "游戏规则非常简单。"
+      en: "The rules are pretty simple."
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: f26e2bc9efd7c5b43804f411de60e787, type: 3}
-      emotion: 
+      emotion: ""
     - lineType: 0
       speaker: 0
-      zh: "\u5B83\u8D1F\u8D23\u5403\u3002"
-      en: It eats.
+      zh: "它负责吃。"
+      en: "It eats."
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 200e948789ac2804389013c9e396177e, type: 3}
-      emotion: 
+      emotion: ""
     - lineType: 0
       speaker: 0
-      zh: "\u4F60\u8D1F\u8D23\u5272\u3002"
-      en: You cut.
+      zh: "你负责割。"
+      en: "You cut."
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: fc50d7cc929e9c14ba8f81d82f2a3bb9, type: 3}
-      emotion: 
+      emotion: ""
     - lineType: 0
       speaker: 0
-      zh: "\u6211\u4EEC\u4E00\u8D77\u52AA\u529B\uFF01"
-      en: "Let\u2019s work together!"
+      zh: "我们一起努力！"
+      en: "Let’s work together!"
       waitBefore: 0
       waitAfter: 0.8
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: b8847b609d6d78249bf253157a6cc5f0, type: 3}
-      emotion: 
+      emotion: ""
     - lineType: 0
       speaker: 0
-      zh: "\u2026\u2026\u5E94\u8BE5\u4E0D\u4F1A\u51FA\u4EC0\u4E48\u4E8B\u5427\uFF1F"
-      en: "\u2026Hope nothing goes wrong, right?"
+      zh: "……应该不会出什么事吧？"
+      en: "…Hope nothing goes wrong, right?"
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 94bb8c6c18b552445a143f36e7952f19, type: 3}
-      emotion: 
-  - id: level1_intro
-    description: "\u7B2C\u4E00\u5173\u8FDB\u5165"
+      emotion: ""
+  - id: "level1_intro"
+    description: "第一关进入"
     lines:
     - lineType: 0
       speaker: 0
-      zh: 
-      en: "Alright alright, you actually made it to the first level. It\u2019s all
-        yours now."
+      zh: ""
+      en: "Alright alright, you actually made it to the first level. It’s all yours now."
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: e0ff1c25002dd914083028936c222067, type: 3}
-      emotion: 
-  - id: level1_light_cut
-    description: "\u7B2C\u4E00\u5173\u5207\u6389\u706F"
+      emotion: ""
+  - id: "level1_light_cut"
+    description: "第一关切掉灯"
     lines:
     - lineType: 0
       speaker: 0
-      zh: 
-      en: "Whoa what are you doing?! Why\u2019d you turn my light off!!"
+      zh: ""
+      en: "Whoa what are you doing?! Why’d you turn my light off!!"
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 58bd3488dc669c24abf37071e35ffed8, type: 3}
-      emotion: panic
+      emotion: "panic"
     - lineType: 0
       speaker: 0
-      zh: 
-      en: You better have a way to turn it back on!!
+      zh: ""
+      en: "You better have a way to turn it back on!!"
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 351057236905ad04fa8a16bc72fcb3a9, type: 3}
-      emotion: panic
-  - id: level1_light_tap_no_light
-    description: "\u7B2C\u4E00\u5173\u70B9\u4E86\u51E0\u4E0B\u4ECD\u7136\u6CA1\u706F"
+      emotion: "panic"
+  - id: "level1_light_tap_no_light"
+    description: "第一关点了几下仍然没灯"
     lines:
     - lineType: 0
       speaker: 0
-      zh: 
-      en: "Where\u2019s the light!! Why isn\u2019t it on yet!"
+      zh: ""
+      en: "Where’s the light!! Why isn’t it on yet!"
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 284263369da391b4ab7972a665fa2ce5, type: 3}
-      emotion: panic
+      emotion: "panic"
     - lineType: 0
       speaker: 0
-      zh: 
-      en: Thought you were good, gonna get stuck right here?
+      zh: ""
+      en: "Thought you were good, gonna get stuck right here?"
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 3c8fd341858ba2b45bda644e6003985c, type: 3}
-      emotion: taunt
-  - id: level1_light_restored
-    description: "\u7B2C\u4E00\u5173\u706F\u91CD\u65B0\u6253\u5F00"
+      emotion: "taunt"
+  - id: "level1_light_restored"
+    description: "第一关灯重新打开"
     lines:
     - lineType: 0
       speaker: 0
-      zh: 
-      en: "Okay okay, you win. Let\u2019s keep going."
+      zh: ""
+      en: "Okay okay, you win. Let’s keep going."
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 1c31f8f636005594aa40467097a773b3, type: 3}
-      emotion: relieved
-  - id: level1_complete
-    description: "\u7B2C\u4E00\u5173\u5B8C\u6210"
+      emotion: "relieved"
+  - id: "level1_complete"
+    description: "第一关完成"
     lines:
     - lineType: 0
       speaker: 0
-      zh: 
-      en: "Didn\u2019t think you\u2019d do that well. Keep going."
+      zh: ""
+      en: "Didn’t think you’d do that well. Keep going."
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: bbaf9536fcbab0246b307179c15ede2a, type: 3}
-      emotion: surprised
+      emotion: "surprised"
     - lineType: 0
       speaker: 0
-      zh: 
-      en: Hurry up and feed my bird!
+      zh: ""
+      en: "Hurry up and feed my bird!"
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 56cdd2de82cd0f941a7f676b424d2aa3, type: 3}
-      emotion: urgent
-  - id: level2_intro
-    description: "\u7B2C\u4E8C\u5173\u8FDB\u5165"
+      emotion: "urgent"
+  - id: "level2_intro"
+    description: "第二关进入"
     lines:
     - lineType: 0
       speaker: 0
-      zh: 
-      en: "See that little bird in the bottom left corner? It\u2019s starving right
-        now, hurry up and give it candy!"
+      zh: ""
+      en: "See that little bird in the bottom left corner? It’s starving right now, hurry up and give it candy!"
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: a627948067976534b984a217197ce83b, type: 3}
-      emotion: urgent
-  - id: level2_dog_leash_cut
-    description: "\u7B2C\u4E8C\u5173\u5207\u6389\u72D7\u7EF3"
+      emotion: "urgent"
+  - id: "level2_dog_leash_cut"
+    description: "第二关切掉狗绳"
     lines:
     - lineType: 0
       speaker: 0
-      zh: 
-      en: "Hey hey hey! What\u2019s wrong with you, why\u2019d you let my dog loose!!!!!"
+      zh: ""
+      en: "Hey hey hey! What’s wrong with you, why’d you let my dog loose!!!!!"
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: aacfde3e1809202409f57850afeff2dd, type: 3}
-      emotion: panic
-  - id: level2_dog_candy_failure
-    description: "\u7B2C\u4E8C\u5173\u7CD6\u7ED9\u4E86\u72D7\u540E\u7684\u5931\u8D25"
+      emotion: "panic"
+  - id: "level2_dog_candy_failure"
+    description: "第二关糖给了狗后的失败"
     lines:
     - lineType: 0
       speaker: 0
-      zh: 
-      en: There we go, serves you right for giving candy to the dog. Start over,
-        start over!
+      zh: ""
+      en: "There we go, serves you right for giving candy to the dog. Start over, start over!"
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 4edf3792500c19e4cb347f80242acd47, type: 3}
-      emotion: taunt
-  - id: level2_power_cut
-    description: "\u7B2C\u4E8C\u5173\u5207\u6389\u7535\u6E90\u7EBF"
+      emotion: "taunt"
+  - id: "level2_power_cut"
+    description: "第二关切掉电源线"
     lines:
     - lineType: 0
       speaker: 0
-      zh: 
-      en: "Why\u2019d you cut my power cable\u2026"
+      zh: ""
+      en: "Why’d you cut my power cable…"
       waitBefore: 0
       waitAfter: 0.35
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 549816d926182894780cf9b862938213, type: 3}
-      emotion: annoyed
+      emotion: "annoyed"
     - lineType: 0
       speaker: 0
-      zh: 
-      en: "Ah whatever, it\u2019s fine. Luckily my battery still has some charge,
-        keep going."
+      zh: ""
+      en: "Ah whatever, it’s fine. Luckily my battery still has some charge, keep going."
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: e4f6cf06cb3a27b40a859442065efea5, type: 3}
-      emotion: 
-  - id: level2_settings_hint
-    description: "\u7B2C\u4E8C\u5173\u73A9\u5BB6\u72C2\u70B9\u4F46\u627E\u4E0D\u5230\u8BBE\u7F6E\u6309\u94AE"
+      emotion: ""
+  - id: "level2_settings_hint"
+    description: "第二关玩家狂点但找不到设置按钮"
     lines:
     - lineType: 0
       speaker: 0
-      zh: 
-      en: "Hahahahahaha, stuck with no ideas huh? I\u2019ll take pity on you and
-        tell you\u2014pay close attention to everything in the scene, nothing\u2019s
-        there for no reason~"
+      zh: ""
+      en: "Hahahahahaha, stuck with no ideas huh? I’ll take pity on you and tell you—pay close attention to everything in the scene, nothing’s there for no reason~"
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 3de65074367e63b42be0dfba8926bc8d, type: 3}
-      emotion: hint
-  - id: level2_complete
-    description: "\u7B2C\u4E8C\u5173\u63A5\u7EBF\u5B8C\u6210\u5E76\u8FC7\u5173"
+      emotion: "hint"
+  - id: "level2_complete"
+    description: "第二关接线完成并过关"
     lines:
     - lineType: 0
       speaker: 0
-      zh: 
-      en: "Not bad, you caught on as soon as I gave a hint. Quick learner. Wanna
-        be my apprentice? I\u2019d make a great master."
+      zh: ""
+      en: "Not bad, you caught on as soon as I gave a hint. Quick learner. Wanna be my apprentice? I’d make a great master."
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 2ecfdb98fb39e274299dd40d5dc959b8, type: 3}
-      emotion: pleased
+      emotion: "pleased"
     - lineType: 0
       speaker: 0
-      zh: 
-      en: "Take your time to think about it, let\u2019s move on."
+      zh: ""
+      en: "Take your time to think about it, let’s move on."
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 47dc29abd21d976498fabf0e0463fe4c, type: 3}
-      emotion: 
-  - id: level3_muted
-    description: "\u7B2C\u4E09\u5173\u5173\u6389\u58F0\u97F3\u540E\uFF0C\u4EC5\u5B57\u5E55"
+      emotion: ""
+  - id: "level3_muted"
+    description: "第三关关掉声音后，仅字幕"
     lines:
     - lineType: 0
       speaker: 0
-      zh: "\u5582\uFF1F\u600E\u4E48\u7A81\u7136\u6CA1\u58F0\u97F3\u4E86\uFF1F"
-      en: "Hello? Why\u2019d it go quiet all of a sudden?"
+      zh: "喂？怎么突然没声音了？"
+      en: "Hello? Why’d it go quiet all of a sudden?"
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 515d239757dbdec44b42d74692a89cdb, type: 3}
-      emotion: confused
+      emotion: "confused"
     - lineType: 0
       speaker: 0
-      zh: "\u4F60\u662F\u4E0D\u662F\u628A\u6211\u9759\u97F3\u4E86\uFF1F"
-      en: Did you mute me?
+      zh: "你是不是把我静音了？"
+      en: "Did you mute me?"
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 3291376f52717434d8466318d1522653, type: 3}
-      emotion: annoyed
+      emotion: "annoyed"
     - lineType: 0
       speaker: 0
-      zh: "\u522B\u88C5\u4E86\uFF0C\u6211\u77E5\u9053\u4F60\u80FD\u770B\u89C1\u3002"
-      en: Quit pretending. I know you can see me.
+      zh: "别装了，我知道你能看见。"
+      en: "Quit pretending. I know you can see me."
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 7f2dd6eaff930564cb7dfea6bcbfb075, type: 3}
-      emotion: annoyed
+      emotion: "annoyed"
     - lineType: 0
       speaker: 0
-      zh: "\u5FEB\u6253\u5F00\u58F0\u97F3\uFF01"
-      en: Turn up the volume now!
+      zh: "快打开声音！"
+      en: "Turn up the volume now!"
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 68fcf4a55afc50445954e9fc09131289, type: 3}
-      emotion: urgent
-  - id: level3_unmuted
-    description: "\u7B2C\u4E09\u5173\u91CD\u65B0\u6253\u5F00\u58F0\u97F3"
+      emotion: "urgent"
+  - id: "level3_unmuted"
+    description: "第三关重新打开声音"
     lines:
     - lineType: 0
       speaker: 0
-      zh: "\u7B97\u4F60\u6709\u826F\u5FC3\u3002"
-      en: "Guess you\u2019re not all bad."
+      zh: "算你有良心。"
+      en: "Guess you’re not all bad."
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 9fbd8964727455a48907160a97611b4d, type: 3}
-      emotion: relieved
-  - id: level3_network_cut
-    description: "\u7B2C\u4E09\u5173\u5207\u6389\u7F51\u7EBF"
+      emotion: "relieved"
+  - id: "level3_network_cut"
+    description: "第三关切掉网线"
     lines:
     - lineType: 0
       speaker: 0
-      zh: "\u7B49\u7B49\u2026\u2026\u4FE1\u53F7\u4E0D\u592A\u5BF9\u3002"
-      en: "Wait\u2026 the signal\u2019s acting weird."
+      zh: "等等……信号不太对。"
+      en: "Wait… the signal’s acting weird."
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: a5fffba153df3a14b822d6e55b38eea8, type: 3}
-      emotion: confused
+      emotion: "confused"
     - lineType: 0
       speaker: 0
-      zh: "\u4F60\u662F\u4E0D\u662F\u52A8\u4E86\u4EC0\u4E48\uFF1F"
-      en: Did you mess with something?
+      zh: "你是不是动了什么？"
+      en: "Did you mess with something?"
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: ade5582f2bc676840b4798a0b2fefd84, type: 3}
-      emotion: suspicious
+      emotion: "suspicious"
     - lineType: 0
       speaker: 0
-      zh: "\u6211\u5F00\u59CB\u6709\u70B9\u5361\u4E86\u3002"
-      en: "I\u2019m starting to lag bad."
+      zh: "我开始有点卡了。"
+      en: "I’m starting to lag bad."
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 63ce5986b7ef189499d09cd3665174aa, type: 3}
-      emotion: glitch
-  - id: level3_bird_escape
-    description: "\u7B2C\u4E09\u5173\u628A\u9E1F\u653E\u8D70"
+      emotion: "glitch"
+  - id: "level3_bird_escape"
+    description: "第三关把鸟放走"
     lines:
     - lineType: 0
       speaker: 0
-      zh: "\u6211\u8BA9\u4ED6\u4EEC\u966A\u4E86\u4F60\u8FD9\u4E48\u4E45\uFF0C\u7ED9\u4F60\u5403\u4E86\u8FD9\u4E48\u591A\u7CD6\uFF01\u4F60\u5C45\u7136\u5C31\u8FD9\u6837\u9003\u8D70\u4E86\uFF1F"
-      en: I let them keep you company for ages, gave you all those candies! How dare
-        you run off like that?
+      zh: "我让他们陪了你这么久，给你吃了这么多糖！你居然就这样逃走了？"
+      en: "I let them keep you company for ages, gave you all those candies! How dare you run off like that?"
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 30ac182408eea31479ca7c8e30d5f710, type: 3}
-      emotion: angry
+      emotion: "angry"
     - lineType: 0
       speaker: 1
-      zh: "\u9003\u8D70\uFF1F\u6211\u672C\u6765\u5C31\u4E0D\u5C5E\u4E8E\u8FD9\u513F\u3002"
-      en: Run away? I never belonged here to begin with.
+      zh: "逃走？我本来就不属于这儿。"
+      en: "Run away? I never belonged here to begin with."
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 8269d183577f8ab45955ac6b7973504e, type: 3}
-      emotion: calm
+      emotion: "calm"
     - lineType: 0
       speaker: 0
-      zh: "\u4F60\u4E0D\u80FD\u8D70\uFF0C\u8FD9\u8FD8\u6CA1\u7ED3\u675F\u3002"
-      en: "You can\u2019t leave. This isn\u2019t over yet."
+      zh: "你不能走，这还没结束。"
+      en: "You can’t leave. This isn’t over yet."
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 08926b79252ae7148b4ef2bed08f89c8, type: 3}
-      emotion: threat
+      emotion: "threat"
     - lineType: 0
       speaker: 1
-      zh: "\u53EF\u6211\u65E9\u5C31\u4E0D\u60F3\u5F85\u5728\u8FD9\u4E86\u3002"
-      en: "But I\u2019ve hated being stuck here for ages."
+      zh: "可我早就不想待在这了。"
+      en: "But I’ve hated being stuck here for ages."
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 3c30c1d39249b2e49ad6d0f362325159, type: 3}
-      emotion: sad
+      emotion: "sad"
     - lineType: 0
       speaker: 0
-      zh: "\u4F60\u4EE5\u4E3A\u98DE\u51FA\u53BB\u5C31\u81EA\u7531\u4E86\u5417\uFF1F"
-      en: "You think flying out means you\u2019re free?"
+      zh: "你以为飞出去就自由了吗？"
+      en: "You think flying out means you’re free?"
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: 078ed5256b73de044a39e903b5fc775c, type: 3}
-      emotion: threat
+      emotion: "threat"
     - lineType: 0
       speaker: 1
-      zh: "\u81F3\u5C11\u6BD4\u4E00\u76F4\u88AB\u56F0\u5728\u8FD9\u91CC\u597D\u3002"
-      en: "It\u2019s way better than being trapped forever in here."
+      zh: "至少比一直被困在这里好。"
+      en: "It’s way better than being trapped forever in here."
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: e09b7cf6ec3761146a8a66c08f687181, type: 3}
-      emotion: determined
+      emotion: "determined"
     - lineType: 0
       speaker: 0
-      zh: "\u2026\u2026\u4F60\u4EE5\u4E3A\u6211\u6CA1\u6CD5\u6536\u62FE\u4F60\u5417\uFF1F"
-      en: "...You think I can\u2019t get to you?"
+      zh: "……你以为我没法收拾你吗？"
+      en: "...You think I can’t get to you?"
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
       voiceClip: {fileID: 8300000, guid: ec656b45f7291fa4cb06eb27417c456e, type: 3}
-      emotion: threat
-  - id: ending_route_expected
-    description: "\u7ED3\u675F\u754C\u9762\u8DEF\u7EBF\u4E00"
+      emotion: "threat"
+  - id: "ending_route_expected"
+    description: "结束界面路线一"
     lines:
     - lineType: 0
       speaker: 0
-      zh: "\u5F88\u597D\uFF0C\u8FD9\u4E00\u6B65\u662F\u6B63\u786E\u7684\u3002"
-      en: Great call. You made the right move here.
+      zh: "很好，这一步是正确的。"
+      en: "Great call. You made the right move here."
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
-      emotion: calm
+      voiceClip: {fileID: 8300000, guid: 966a13147525c1948a0dadd054dab54d, type: 3}
+      emotion: "calm"
     - lineType: 0
       speaker: 0
-      zh: "\u4F60\u505A\u5F97\u548C\u9884\u671F\u4E00\u6837\u3002"
-      en: You performed exactly how I planned.
+      zh: "你做得和预期一样。"
+      en: "You performed exactly how I planned."
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
-      emotion: calm
+      voiceClip: {fileID: 8300000, guid: 1fa62aa9232b38a4a92b2e8518e6d8d1, type: 3}
+      emotion: "calm"
     - lineType: 0
       speaker: 0
-      zh: "\u6CA1\u6709\u610F\u5916\uFF0C\u6CA1\u6709\u504F\u5DEE\u3002"
-      en: No surprises, no mistakes at all.
+      zh: "没有意外，没有偏差。"
+      en: "No surprises, no mistakes at all."
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
-      emotion: calm
+      voiceClip: {fileID: 8300000, guid: 9d3f171ea9b7aaf44b741b84e7816211, type: 3}
+      emotion: "calm"
     - lineType: 0
       speaker: 0
-      zh: "\u606D\u559C\u4F60\uFF0C\u901A\u5173\u6210\u529F\u3002"
-      en: "Congratulations, you\u2019ve beaten the level."
+      zh: "恭喜你，通关成功。"
+      en: "Congratulations, you’ve beaten the level."
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
-      voiceClip: {fileID: 0}
-      emotion: calm
-  - id: ending_route_escape
-    description: "\u7ED3\u675F\u754C\u9762\u8DEF\u7EBF\u4E8C"
+      voiceClip: {fileID: 8300000, guid: 7bbc6c4c55a4c4f46a1f17fc6289dac0, type: 3}
+      emotion: "calm"
+  - id: "ending_route_escape"
+    description: "结束界面路线二"
     lines:
     - lineType: 0
       speaker: 1
-      zh: "\u8C22\u8C22\u4F60\u3002"
-      en: Thank you.
+      zh: "谢谢你。"
+      en: "Thank you."
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
-      emotion: grateful
+      voiceClip: {fileID: 8300000, guid: 678614efa7e86b2418370d5cc723bdad, type: 3}
+      emotion: "grateful"
     - lineType: 0
       speaker: 1
-      zh: "\u4F60\u4E0D\u662F\u88AB\u5E26\u7740\u8D70\u7684\u90A3\u4E2A\u4EBA\u3002"
-      en: "You\u2019re not just someone being dragged along for the ride."
+      zh: "你不是被带着走的那个人。"
+      en: "You’re not just someone being dragged along for the ride."
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
-      voiceClip: {fileID: 0}
-      emotion: grateful
+      voiceClip: {fileID: 8300000, guid: 3c79560c3c7a9934ca76b9d87616dffe, type: 3}
+      emotion: "grateful"
     - lineType: 0
       speaker: 1
-      zh: "\u4F60\u624D\u662F\u8BA9\u8FD9\u4E00\u5207\u6210\u7ACB\u7684\u4EBA\u3002"
-      en: "You\u2019re the one who made all of this possible."
+      zh: "你才是让这一切成立的人。"
+      en: "You’re the one who made all of this possible."
       waitBefore: 0
       waitAfter: 0.2
       autoAdvance: 1
-      voiceClip: {fileID: 0}
-      emotion: grateful
+      voiceClip: {fileID: 8300000, guid: f21d72c7a892be141ab61450ca81230b, type: 3}
+      emotion: "grateful"

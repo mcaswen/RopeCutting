@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Scene_Level2_wanyun.unity
     guid: 773c1893c70348c49a005e3c8f2c34f1
+  - enabled: 1
+    path: Assets/Scenes/Scene_Level3_sdw.unity
+    guid: e77725ddd96f4d346a3cf39032e655ae
   m_configObjects: {}

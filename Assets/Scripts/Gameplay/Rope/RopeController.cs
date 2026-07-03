@@ -48,6 +48,10 @@ namespace Gameplay.Rope
         [SerializeField, Min(0f)] private float _cutFadeDelay = 0.15f;
         [SerializeField, Min(0.01f)] private float _cutFadeDuration = 0.4f;
 
+        [Header("Protection")]
+        [SerializeField] private bool _indestructible;
+        [SerializeField] private bool _disableNodeColliders;
+
         private LineRenderer _lineRenderer;
         private readonly List<RopeChain> _chains = new List<RopeChain>();
 
@@ -191,13 +195,16 @@ namespace Gameplay.Rope
                 rb.drag = 0.5f;
                 rb.gravityScale = 1f;
 
-                CircleCollider2D col = node.AddComponent<CircleCollider2D>();
-                col.radius = _nodeRadius;
+                if (!_disableNodeColliders)
+                {
+                    CircleCollider2D col = node.AddComponent<CircleCollider2D>();
+                    col.radius = _nodeRadius;
+                }
 
                 chain.Nodes.Add(node);
 
                 // 忽略相邻节点碰撞
-                if (i > 0)
+                if (!_disableNodeColliders && i > 0)
                 {
                     Physics2D.IgnoreCollision(
                         node.GetComponent<CircleCollider2D>(),
@@ -402,6 +409,8 @@ namespace Gameplay.Rope
 
         public bool TryCut(Vector2 lineStart, Vector2 lineEnd)
         {
+            if (_indestructible) return false;
+
             for (int chainIndex = 0; chainIndex < _chains.Count; chainIndex++)
             {
                 RopeChain chain = _chains[chainIndex];

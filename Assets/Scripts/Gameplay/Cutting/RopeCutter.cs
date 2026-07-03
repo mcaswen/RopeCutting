@@ -120,8 +120,7 @@ namespace Gameplay.Cutting
         /// </summary>
         private void CheckRopeCut(Vector2 lineStart, Vector2 lineEnd)
         {
-            if (_ropes == null || _ropes.Length == 0)
-                FindRopesInScene();
+            FindRopesInScene();
 
             foreach (RopeController rope in _ropes)
             {

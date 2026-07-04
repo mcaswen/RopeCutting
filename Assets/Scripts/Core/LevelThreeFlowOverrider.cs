@@ -3,6 +3,8 @@ using Gameplay.Collectible;
 using Gameplay.Interaction;
 using Gameplay.Rope;
 using Systems;
+using Systems.Dialogue;
+using UI;
 using UnityEngine;
 
 namespace Core
@@ -26,6 +28,17 @@ namespace Core
         [SerializeField] private AnimationCurve _endingCameraMoveCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
         [SerializeField] private LevelThreeEndingFlow _endingFlow;
 
+        [Header("Level 3 - Rope Cut Dialogue")]
+        [SerializeField] private string _networkCutDialogueId;
+        [SerializeField] private RopeController _extraDialogueRope;
+        [SerializeField] private string _extraDialogueId;
+
+        [Header("Level 3 - Volume Dialogues")]
+        [SerializeField] private InteractiveButton _volumeButton;
+        [SerializeField] private HeadphoneCableRopeController _headphoneCable;
+        [SerializeField] private string _mutedDialogueId;
+        [SerializeField] private string _unmutedDialogueId;
+
         [Header("Level 3 - Victory Condition")]
         [SerializeField] private RopeController[] _victoryRopes;
 
@@ -35,6 +48,7 @@ namespace Core
         private bool _victoryConditionMet;
         private int _victoryRopesCutCount;
         private Coroutine _endingTransitionRoutine;
+        private bool _wasMuted;
 
         protected override void Awake()
         {
@@ -62,6 +76,15 @@ namespace Core
                 _flyingCharacter.Disappearing += HandleFlyingCharacterDisappearing;
 
             RegisterVictoryRopes();
+
+            if (_extraDialogueRope != null)
+                _extraDialogueRope.OnCut += HandleExtraDialogueRopeCut;
+
+            if (_volumeButton != null)
+                _volumeButton.OnVolumeChanged.AddListener(HandleVolumeChanged);
+
+            if (_headphoneCable != null)
+                _headphoneCable.OnCut += HandleHeadphoneCableCut;
         }
 
         protected override void OnDisable()
@@ -76,6 +99,15 @@ namespace Core
                 _flyingCharacter.Disappearing -= HandleFlyingCharacterDisappearing;
 
             UnregisterVictoryRopes();
+
+            if (_extraDialogueRope != null)
+                _extraDialogueRope.OnCut -= HandleExtraDialogueRopeCut;
+
+            if (_volumeButton != null)
+                _volumeButton.OnVolumeChanged.RemoveListener(HandleVolumeChanged);
+
+            if (_headphoneCable != null)
+                _headphoneCable.OnCut -= HandleHeadphoneCableCut;
 
             if (_endingTransitionRoutine != null)
             {
@@ -119,6 +151,14 @@ namespace Core
                 _lineHeadObject.SetActive(true);
 
             ShowNetworkLoading();
+
+            if (!string.IsNullOrWhiteSpace(_networkCutDialogueId))
+            {
+                var subtitleUI = FindObjectOfType<DialogueSubtitleUI>(true);
+                if (subtitleUI != null)
+                    subtitleUI.EnsureActive();
+                DialogueManager.Instance?.Play(_networkCutDialogueId);
+            }
         }
 
         private void HandleUsbConnected()
@@ -130,6 +170,44 @@ namespace Core
 
             if (_networkLoadingObject != null)
                 _networkLoadingObject.SetActive(false);
+        }
+
+        private void HandleExtraDialogueRopeCut(RopeController rope)
+        {
+            if (!IsPlaying) return;
+            if (string.IsNullOrWhiteSpace(_extraDialogueId)) return;
+
+            var subtitleUI = FindObjectOfType<DialogueSubtitleUI>(true);
+            if (subtitleUI != null)
+                subtitleUI.EnsureActive();
+            DialogueManager.Instance?.Play(_extraDialogueId);
+        }
+
+        private void HandleVolumeChanged(float volume)
+        {
+            if (!IsPlaying) return;
+
+            if (volume <= 0f && !string.IsNullOrWhiteSpace(_mutedDialogueId))
+            {
+                _wasMuted = true;
+                var subtitleUI = FindObjectOfType<DialogueSubtitleUI>(true);
+                if (subtitleUI != null)
+                    subtitleUI.EnsureActive();
+                DialogueManager.Instance?.Play(_mutedDialogueId);
+            }
+            else if (volume > 0f && _wasMuted && !string.IsNullOrWhiteSpace(_unmutedDialogueId))
+            {
+                _wasMuted = false;
+                var subtitleUI = FindObjectOfType<DialogueSubtitleUI>(true);
+                if (subtitleUI != null)
+                    subtitleUI.EnsureActive();
+                DialogueManager.Instance?.Play(_unmutedDialogueId);
+            }
+        }
+
+        private void HandleHeadphoneCableCut(RopeController rope)
+        {
+            _wasMuted = true;
         }
 
         private void ShowNetworkLoading()

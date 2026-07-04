@@ -100,10 +100,20 @@ namespace Core
 
         private void Awake()
         {
+            // _endingScreen 在 Awake 阶段先保持场景的默认状态，
+            // 延迟到 Start 再禁用，避免在场景切换时干扰
+            // RopeSubtitleSequencePlayer 的初始化顺序
             ResolveReferences();
-            SetScreenActive(_endingScreen, false);
-
             _isActive = _activateOnAwake;
+        }
+
+        private void Start()
+        {
+            // 确保开场时结算画面隐藏
+            // 放在 Start 中而不是 Awake，是为了让所有组件的 Awake 先完成，
+            // 避免场景切换时 SetActive(false) 与子对象初始化产生竞态
+            if (_endingScreen != null && _endingScreen.activeSelf)
+                _endingScreen.SetActive(false);
         }
 
         private void OnEnable()

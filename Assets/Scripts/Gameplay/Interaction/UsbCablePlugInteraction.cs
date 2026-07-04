@@ -372,8 +372,8 @@ namespace Gameplay.Interaction
 
             _cableLine.positionCount = GetCableLinePointCount();
             _cableLine.useWorldSpace = true;
-            _cableLine.startWidth = template != null ? template.startWidth : _lineWidth;
-            _cableLine.endWidth = template != null ? template.endWidth : _lineWidth;
+            _cableLine.startWidth = _lineWidth;
+            _cableLine.endWidth = _lineWidth;
             _cableLine.textureMode = LineTextureMode.Stretch;
         }
 

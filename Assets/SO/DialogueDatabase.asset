@@ -19,7 +19,7 @@ MonoBehaviour:
     - lineType: 0
       speaker: 0
       zh: "\u6B22\u8FCE\u6765\u5230\u300A\u53EA\u662F\u5272\u7EF3\u5B50\u300B\uFF01"
-      en: "Welcome to Just Cut The Rope \uFF01"
+      en: Welcome to Just Cut The Rope !
       waitBefore: 0
       waitAfter: 0.15
       autoAdvance: 1
